@@ -1,0 +1,3 @@
+## visual tests
+library('iplotr')
+

@@ -1,0 +1,7 @@
+load("/Users/rawr/Documents/r.packages/iplotr/data/volcano.Rdata")
+ls()
+volcano
+load("/Users/rawr/Documents/r.packages/iplotr/data/volcano.Rdata")
+dim(volcano)
+head(volcano)
+summary(volcano$pval)
