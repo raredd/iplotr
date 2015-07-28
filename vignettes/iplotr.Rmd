@@ -11,6 +11,7 @@
 * [tree maps](#tree-maps)  
 * [trend lines](#trend-lines)  
 * [customizations](#customizations)  
+* [install](#install)  
 
 [iplotr](http://github.com/raredd/iplotr) is a fork of Karl Broman's [R/qtlcharts](http://kbroman.org/qtlcharts) R package to create interactive charts aimed at QTL data for use with [R/qtl](http://www.rqtl.org).
 
@@ -155,3 +156,11 @@ icurve(mat = mm, group = 1:25 %% 5 == 0,
 Each type of plot has its own set of options and customizations that affect the appearance of individual aesthetic elements. Some options such as `pointcolor`, `pointsize`, or `rectcolor` are common among all or most plots, but others apply only to specific plots.
 
 See `?iplotOpts` for a list of the plots in this package as well as links to the lists of options for each plot.
+
+
+### install
+
+```{r, eval=FALSE}
+install.packages('devtools')
+devtools::install_github('raredd/iplotr', build_vignettes = TRUE)
+```
