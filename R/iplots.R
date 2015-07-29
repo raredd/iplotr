@@ -177,6 +177,14 @@ idot <- function(y, group, cex = 3, subgroup,
 #' If \code{col} is given with no \code{group} variable, the colors for each
 #' observation will be recycled in order.
 #' 
+#' Default cluster method is \code{stats::hclust(dist(x), method = 'average')}
+#' which will return a list containing a named vector, \code{"order"}, which is
+#' used to reorder the variables.
+#' 
+#' In order to pass a custom clustering function to \code{cluster}, the
+#' function must take a single input (a correlation matrix) and return either
+#' a vector or a list with a named vector, \code{"order"}.
+#' 
 #' @param mat data matrix (observations x variables)
 #' @param group vector of grouping (\code{\link{factor}}-like) variables for
 #' each observation
@@ -185,8 +193,9 @@ idot <- function(y, group, cex = 3, subgroup,
 #' of \code{group}
 #' @param labels optional character vector or named list of character vectors
 #' to label each point; if \code{NULL}, points will be labeled by index
-#' @param cluster logical; if \code{TRUE}, the variables will be reordered by
-#' clustering
+#' @param cluster logical or function; if \code{TRUE}, the variables will be
+#' clustered and reordered; if \code{FALSE}, no reordering will be done;
+#' otherwise, a custom clustering function may be given; see details
 #' @param cor_method character string indicating which correlation coefficient
 #' is to be computed; one of \code{'pearson'} (default), \code{'kendall'}, or
 #' \code{'spearman'}: can be abbreviated; see \code{\link{cor}}
@@ -211,6 +220,11 @@ idot <- function(y, group, cex = 3, subgroup,
 #' dat <- replicate(50, mtcars[, sample(1:11, 1), drop = FALSE])
 #' dat <- do.call('cbind', dat)
 #' icorr(dat, cluster = TRUE, group = mtcars$cyl)
+#' 
+#' ## using a custom clustering function
+#' icorr(dat, cluster = function(x) hclust(dist(x, method = 'maximum')))
+#' icorr(dat, cluster = function(x) sample(seq.int(ncol(x))))
+#' icorr(dat, cluster = function(x) list(order = order(rowMeans(x))))
 #' 
 #' @export
 
@@ -239,6 +253,11 @@ icorr <- function(mat, group, col, labels = NULL, cluster = TRUE,
       col <- numeric2col(recycle(seq.int(unique(group)), col))
     }
   }
+  stopifnot(class(cluster) %in% c('logical','function'))
+  if (is.function(cluster)) {
+    cFUN <- cluster
+    cluster <- TRUE
+  } else cFUN <- NULL
   co <- plotOpts
   opts <- list(cortitle = co$cortitle %||% 'Correlation matrix',
                scattitle = co$scattitle %||% 'Scatter plot of values',
@@ -248,7 +267,7 @@ icorr <- function(mat, group, col, labels = NULL, cluster = TRUE,
   data_list <- convert4iplotcorr(
     mat, group, reorder = cluster, rows = 1:ncol(mat), cols = 1:ncol(mat),
     corr = stats::cor(mat, use = 'pairwise.complete.obs', method = cor_method),
-    scatterplots = scatterplots, corr_was_presubset = FALSE)
+    scatterplots = scatterplots, corr_was_presubset = FALSE, cFUN = cFUN)
   defaultAspect <- 2
   browsersize <- getPlotSize(defaultAspect)
   

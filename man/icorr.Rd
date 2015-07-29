@@ -20,8 +20,9 @@ of \code{group}}
 \item{labels}{optional character vector or named list of character vectors
 to label each point; if \code{NULL}, points will be labeled by index}
 
-\item{cluster}{logical; if \code{TRUE}, the variables will be reordered by
-clustering}
+\item{cluster}{logical or function; if \code{TRUE}, the variables will be
+clustered and reordered; if \code{FALSE}, no reordering will be done;
+otherwise, a custom clustering function may be given; see details}
 
 \item{cor_method}{character string indicating which correlation coefficient
 is to be computed; one of \code{'pearson'} (default), \code{'kendall'}, or
@@ -39,6 +40,14 @@ Interactive correlation matrices with optional scatter plots.
 \details{
 If \code{col} is given with no \code{group} variable, the colors for each
 observation will be recycled in order.
+
+Default cluster method is \code{stats::hclust(dist(x), method = 'average')}
+which will return a list containing a named vector, \code{"order"}, which is
+used to reorder the variables.
+
+In order to pass a custom clustering function to \code{cluster}, the
+function must take a single input (a correlation matrix) and return either
+a vector or a list with a named vector, \code{"order"}.
 }
 \examples{
 ## heatmap only
@@ -52,6 +61,11 @@ set.seed(1)
 dat <- replicate(50, mtcars[, sample(1:11, 1), drop = FALSE])
 dat <- do.call('cbind', dat)
 icorr(dat, cluster = TRUE, group = mtcars$cyl)
+
+## using a custom clustering function
+icorr(dat, cluster = function(x) hclust(dist(x, method = 'maximum')))
+icorr(dat, cluster = function(x) sample(seq.int(ncol(x))))
+icorr(dat, cluster = function(x) list(order = order(rowMeans(x))))
 }
 \seealso{
 \code{\link{iscatter}}, \code{\link{idot}}, \code{\link{itree}},

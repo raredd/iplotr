@@ -67,8 +67,11 @@ convert_map <- function(map) {
 }
 
 convert4iplotcorr <- function(dat, group, rows, cols, reorder = FALSE, corr,
-                              corr_was_presubset = FALSE, scatterplots = TRUE) {
-  ## qtlcharts:::convert4iplotcorr
+                              corr_was_presubset = FALSE, scatterplots = TRUE,
+                              cFUN = NULL) {
+  ## qtlcharts:::convert4iplotcorr with modifications for cFUN
+  cFUN <- if (is.null(cFUN))
+    function(x) stats::hclust(dist(x), method = 'average') else cFUN
   indID <- rownames(dat)
   if (is.null(indID)) 
     indID <- paste(1:nrow(dat))
@@ -85,7 +88,18 @@ convert4iplotcorr <- function(dat, group, rows, cols, reorder = FALSE, corr,
     if (ncol(dat) != nrow(corr) || ncol(dat) != ncol(corr)) 
       stop("corr matrix should be ", ncol(dat), " x ", ncol(dat))
     if (reorder) {
-      ord <- stats::hclust(stats::dist(corr), method = "average")$order
+      ord <- cFUN(corr)
+      ord <- tryCatch(if (is.vector(ord, mode = 'integer')) ord else ord$order,
+                  error = function(e) {
+                    warning('Variables not reordered; see \'details\' ',
+                            'section on the use of \'cluster\'', domain = NA)
+                    seq.int(ncol(corr))
+                  },
+                  warning = function(w) {
+                    warning('Variables not reordered; see \'details\' ',
+                            'section on the use of \'cluster\'', domain = NA)
+                    seq.int(ncol(corr))
+                  })
       variables <- variables[ord]
       dat <- dat[, ord]
       reconstructColumnSelection <- function(ord, cols) {
