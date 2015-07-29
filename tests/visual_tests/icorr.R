@@ -36,3 +36,12 @@ icorr(mtcars, group = mtcars$cyl, col = c('red', 'blue','green','pink'))
 icorr(mtcars, cluster = FALSE,
       labels = with(mtcars, list(' ' = rownames(mtcars), mpg = mpg,
                   '<i>p</i>-value' = rawr::pvalr(1 / exp(c(1:10,1:10,1:2))))))
+
+
+## cluster functions
+## expect identical
+icorr(mtcars, cluster = function(x) x) ## with warning
+icorr(mtcars, cluster = FALSE)
+
+icorr(mtcars, cluster = 1:11) ## error
+icorr(mtcars, cluster = c(TRUE, FALSE))  ## warning
