@@ -1,7 +1,7 @@
-## utils needed from qtlcharts
+### utils needed from qtlcharts
 # getPlotSize, getScreenSize, setScreenSize, group2numeric, add2chartOpts,
 # convert_map, convert4iplotcorr, convert_curves, convert_scat, grabarg
-##
+###
 
 getPlotSize <- function(aspectRatio) {
   ## qtlcharts:::getPlotSize
