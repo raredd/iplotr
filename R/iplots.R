@@ -5,12 +5,15 @@
 
 #' iscatter
 #' 
+#' @description
 #' Interactive scatter plot.
 #' 
-#' If \code{labels} is given as a vector, points are labeled as given and
-#' recycled if necessary. Optionally, \code{labels} can be given as a named
-#' list for where each element of the list is a character vector (or one which
-#' can be coerced) having the same length of \code{x}; see examples.
+#' If \code{labels} is a vector, points are labeled as-is and recycled if
+#' necessary. Optionally, \code{labels} can be a \emph{named} list where each
+#' element of the list is a character vector (or one which can be coerced)
+#' having the same length of \code{x}; see examples. If \code{x} and \code{y}
+#' are named vectors, points will be labeled without needing to use
+#' \code{labels}.
 #' 
 #' @param x,y vectors of x- and y-coordinates; if \code{y} is \code{NULL},
 #' \code{x} will be plotted along the y-axis by index of \code{x}
@@ -31,15 +34,24 @@
 #' \code{\link{icurve}}, \code{\link[qtlcharts]{iplot}}
 #' 
 #' @examples
+#' ## basic usage
 #' iscatter(1:5, col = 1:5, cex = 5)
 #' 
+#' ## using named vectors
+#' x <- with(mtcars, setNames(mpg, mpg))
+#' y <- with(mtcars, setNames(wt, wt))
+#' iscatter(x, y)
+#' 
+#' ## using the labels parameter
 #' with(mtcars,
 #'   iscatter(wt, mpg, group = cyl, col = 1:3, cex = 5,
 #'            main = 'Motor Trend car road tests',
 #'            labels = list(model = rownames(mtcars), mpg = mpg, hp = hp)))
-#' ## test
+#' 
+#' ## compare with base graphics
 #' with(mtcars, plot(wt, mpg, col = factor(cyl), pch = 19))
 #' 
+#' ## labels parameter supports additional formatting with html tags
 #' with(ivolcano,
 #'      iscatter(logFC, -log10(pval), group = pval < 0.05 & abs(logFC) > 1,
 #'               col = c('lightgrey','green'),
@@ -58,11 +70,15 @@ iscatter <- function(x, y = NULL, group, col, cex = 3,
   if (is.null(y)) {
     xl <- 'Index'
     yl <- deparse(substitute(x))
+    ll <- names(x)
     y <- x
     x <- seq_along(y)
   } else {
     xl <- deparse(substitute(x))
     yl <- deparse(substitute(y))
+    ll <- list(x = names(x), y = names(y))
+    if (all(sapply(ll, is.null)))
+      ll <- NULL
   }
   if (missing(group)) {
     if (missing(col)) {
@@ -82,8 +98,12 @@ iscatter <- function(x, y = NULL, group, col, cex = 3,
     }
   }
   group <- group2numeric(group)
-  labels <- if (is.null(labels))
-    seq_along(x) else get_labels(labels, length(x))
+  
+  ## if x,y are named, use those names, otherwise use labels or index
+  labels <- if (is.null(labels)) {
+    if (is.null(ll)) seq_along(x) else get_labels(ll, length(x))
+  } else get_labels(labels, length(x))
+  names(x) <- names(y) <- NULL
   
   opts <- list(xlab = xlab %||% xl, ylab = ylab %||% yl, title = main,
                pointsize = cex, xlim = xlim, ylim = ylim, pointcolor = col)
@@ -101,7 +121,12 @@ iscatter <- function(x, y = NULL, group, col, cex = 3,
 
 #' idot
 #' 
+#' @description
 #' Interactive dot plot.
+#' 
+#' Any numeric data can be plotted on the y-axis but the x-axis should be
+#' discrete groups. Points will be labeled with the vector names, the
+#' \code{labels} parameter, or by index otherwise.
 #' 
 #' @param y numeric vector
 #' @param group vector of grouping (\code{\link{factor}}-like) variables the
@@ -120,12 +145,15 @@ iscatter <- function(x, y = NULL, group, col, cex = 3,
 #' \code{\link{icurve}}, \code{\link[qtlcharts]{iplotPXG}}
 #' 
 #' @examples
-#' with(mtcars, idot(mpg, gear))
+#' ## basic usage with named vectors
+#' idot(setNames(mtcars$mpg, rownames(mtcars)))
 #' 
+#' ## using group and subgroup (a vector of logicals to color points)
 #' with(mtcars,
 #'      idot(mpg, gear, subgroup = am == 1, cex = 5, ylim = c(0, 40),
 #'           labels = rownames(mtcars)))
 #' 
+#' ## labels parameter supports additional formatting with html tags
 #' with(ivolcano,
 #'      idot(logFC, substr(rownames(ivolcano), 1, 1),
 #'           subgroup = pval < 0.05, xlab = 'Treatment arm',
@@ -141,14 +169,18 @@ idot <- function(y, group, cex = 3, subgroup,
                  xlim = NULL, ylim = NULL,
                  xlab = NULL, ylab = NULL, main = NULL,
                  labels = NULL, plotOpts = NULL) {
-  xl <- deparse(substitute(group))
+  xl <- if (missing(group)) 'group' else deparse(substitute(group))
   yl <- deparse(substitute(y))
-  group <- recycle(y, group)
+  group <- recycle(y, if (missing(group)) ' ' else group)
   group_levels <- sort(unique(group))
   group <- group2numeric(group)
   ## diff colors are made by sign in matrix - only two groups possible
   wh <- if (!missing(subgroup)) ifelse(subgroup, 1, -1) else recycle(y, 1)
-  labels <- get_labels(labels, length(y))
+  
+  ## named vectors not supported in jsonlite
+  if (!is.null(nn <- names(y)))
+    names(y) <- NULL
+  labels <- if (is.null(labels)) nn else get_labels(labels, length(y))
   
   opts <- list(xlab = xlab %||% xl, ylab = ylab %||% yl, title = main,
                pointsize = cex, xlim = xlim, ylim = ylim)
@@ -172,8 +204,15 @@ idot <- function(y, group, cex = 3, subgroup,
 
 #' icorr
 #' 
-#' Interactive correlation matrices with optional scatter plots.
+#' @description
+#' Interactive correlation matrices (heat maps) with optional scatter plots.
 #' 
+#' Variables will be clustered (see details) and reordered by default. Cells
+#' will be labeled with the column names of the input data, and if a scatter
+#' plot is created, points will be labeled with the row names (this can be
+#' over-ridden by using the \code{labels} parameter).
+#' 
+#' @details
 #' If \code{col} is given with no \code{group} variable, the colors for each
 #' observation will be recycled in order.
 #' 
@@ -185,7 +224,7 @@ idot <- function(y, group, cex = 3, subgroup,
 #' function must take a single input (a correlation matrix) and return either
 #' a vector or a list with a named vector, \code{"order"}.
 #' 
-#' @param mat data matrix (observations x variables)
+#' @param mat data matrix (observations x variables) of numeric values
 #' @param group vector of grouping (\code{\link{factor}}-like) variables for
 #' each observation
 #' @param col a vector of colors for each unique \code{group} of points in
@@ -212,6 +251,7 @@ idot <- function(y, group, cex = 3, subgroup,
 #' ## heatmap only
 #' icorr(mtcars, scatterplots = FALSE)
 #' 
+#' ## with scatter plots
 #' icorr(mtcars, group = mtcars$cyl, col = c('blue','red','green'),
 #'       plotOpts = list(corcolors = heat.colors(3)))
 #' 
@@ -283,7 +323,12 @@ icorr <- function(mat, group, col, labels = NULL, cluster = TRUE,
 
 #' itree
 #' 
+#' @description
 #' Interactive tree plot with search bar.
+#' 
+#' Any numeric data can be plotted on the y-axis but the x-axis should be
+#' discrete groups. Points will be labeled with their \emph{unique} names
+#' and y-value.
 #' 
 #' @param y a \emph{uniquely-named} numeric vector
 #' @param group vector of grouping (\code{\link{factor}}-like) variables the
@@ -298,9 +343,11 @@ icorr <- function(mat, group, col, labels = NULL, cluster = TRUE,
 #' \code{\link{icurve}}, \code{\link[qtlcharts]{iplotMap}}
 #' 
 #' @examples
+#' ## basic usage with and without groups
 #' itree(setNames(rnorm(10), letters[1:10]))
-#' itree(setNames(rnorm(20), letters[1:20]), 1:4)
+#' itree(setNames(rnorm(20), letters[1:20]), group = 1:4)
 #' 
+#' ## another example
 #' set.seed(1)
 #' n <- 100
 #' ng <- 5
@@ -308,6 +355,20 @@ icorr <- function(mat, group, col, labels = NULL, cluster = TRUE,
 #' yv <- kinda_sort(runif(n, -1, 1), n = n / 2) * 100
 #' itree(yv, gr, main = 'Subject response from baseline',
 #'       ylim = c(-100,100), xlab = 'Treatment arm', ylab = '% change')
+#' 
+#' ## search is more useful with lots of data
+#' set.seed(1)
+#' p0 <- function(x) paste0(x, collapse = '')
+#' n <- 500
+#' gr <- replicate(n, (function()
+#'   p0(sample(c('A','T','C','G'), 15, replace = TRUE)))())
+#' y <- setNames(rpois(n, 40), gr)
+#' 
+#' ## hacky way to remove tick labels which start running together
+#' gr_labels <- Map(function(x) p0(rep(' ', x)), sequence(n))
+#' 
+#' itree(y, unlist(gr_labels), ylab = 'Frequency', xlab = 'Sequence',
+#'       plotOpts = list(tickwidth = 2, linewidth = 5, width = 2000))
 #' 
 #' @export
 
@@ -355,14 +416,20 @@ itree <- function(y, group, ylim = NULL, xlab = NULL, ylab = NULL,
 
 #' icurve
 #' 
+#' @description
 #' Interactive curves over time with optional interactive scatter plots.
 #' 
-#' @param mat a numeric matrix, \code{nobs x ntimes}
+#' Each timepoint is a column of \code{mat}, that is, times are treated as
+#' discrete and assumed to be uniformly-spaced. Observations will be linked
+#' across all plots (curves and optional scatter plots) by row index, so 
+#' observations should be in the same order in all data provided.
+#' 
+#' @param mat a numeric matrix, \code{observations x timepoints}
 #' @param labels optional character vector or named list of character vectors
 #' to label each point; if \code{NULL}, points will be labeled by index
 #' @param group vector of group (\code{\link{factor}}-like) variables
 #' @param iscatter1 a numeric matrix or \code{NULL}, \code{nobs x 2}
-#' @param iscatter2 a numeric matrix or \code{NULL}, \code{nobs x 2}
+#' @param iscatter2 see \code{iscatter1}
 #' @param plotOpts list of additional plot options; see
 #' \code{\link{icurveOpts}}
 #' 
@@ -371,9 +438,10 @@ itree <- function(y, group, ylim = NULL, xlab = NULL, ylab = NULL,
 #' \code{\link{icurve}}, \code{\link[qtlcharts]{iplotCurves}}
 #' 
 #' @examples
-#' icurve(matrix(AirPassengers, ncol = 12, byrow = TRUE),
-#'        labels = 1949:1960)
+#' ## basic usage, no scatter plots
+#' icurve(matrix(AirPassengers, ncol = 12, byrow = TRUE), labels = 1949:1960)
 #' 
+#' ## connecting observations over time with additional linked scatter plots
 #' set.seed(1)
 #' n <- 25
 #' ## 25 observations and 5 timepoints
@@ -403,12 +471,16 @@ icurve <- function(mat, labels, group, iscatter1 = NULL, iscatter2 = NULL,
   mat <- as.matrix(mat)
   nr <- nrow(mat)
   nc <- ncol(mat)
+  if (!is.null(iscatter1))
+    iscatter1 <- as.matrix(iscatter1)
+  if (!is.null(iscatter2))
+    iscatter2 <- as.matrix(iscatter2)
   if (!is.numeric(iscatter1 %||% numeric(1)) || 
       !is.numeric(iscatter2 %||% numeric(1)))
-    stop('Scatter matrics should be numeric')
+    stop('Scatter matrices should be numeric')
   if (!ident(nr, nrow(iscatter1) %||% nr, nrow(iscatter2) %||% nr))
     stop('All matrices should have same number of observations (rows)')
-  if (!ident(ncol(iscatter1) %||% 2, ncol(iscatter2) %||% 2))
+  if (!ident(ncol(iscatter1) %||% 2L, ncol(iscatter2) %||% 2L))
     stop('Scatter matrices should have two columns')
   if (is.null(iscatter1) && !is.null(iscatter2)) {
     scatter1 <- scatter2
