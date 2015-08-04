@@ -32,23 +32,33 @@ to label each point; if \code{NULL}, points will be labeled by index}
 }
 \description{
 Interactive scatter plot.
-}
-\details{
-If \code{labels} is given as a vector, points are labeled as given and
-recycled if necessary. Optionally, \code{labels} can be given as a named
-list for where each element of the list is a character vector (or one which
-can be coerced) having the same length of \code{x}; see examples.
+
+If \code{labels} is a vector, points are labeled as-is and recycled if
+necessary. Optionally, \code{labels} can be a \emph{named} list where each
+element of the list is a character vector (or one which can be coerced)
+having the same length of \code{x}; see examples. If \code{x} and \code{y}
+are named vectors, points will be labeled without needing to use
+\code{labels}.
 }
 \examples{
+## basic usage
 iscatter(1:5, col = 1:5, cex = 5)
 
+## using named vectors
+x <- with(mtcars, setNames(mpg, mpg))
+y <- with(mtcars, setNames(wt, wt))
+iscatter(x, y)
+
+## using the labels parameter
 with(mtcars,
   iscatter(wt, mpg, group = cyl, col = 1:3, cex = 5,
            main = 'Motor Trend car road tests',
            labels = list(model = rownames(mtcars), mpg = mpg, hp = hp)))
-## test
+
+## compare with base graphics
 with(mtcars, plot(wt, mpg, col = factor(cyl), pch = 19))
 
+## labels parameter supports additional formatting with html tags
 with(ivolcano,
      iscatter(logFC, -log10(pval), group = pval < 0.05 & abs(logFC) > 1,
               col = c('lightgrey','green'),

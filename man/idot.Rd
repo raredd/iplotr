@@ -29,14 +29,21 @@ to label each point; if \code{NULL}, points will be labeled by index}
 }
 \description{
 Interactive dot plot.
+
+Any numeric data can be plotted on the y-axis but the x-axis should be
+discrete groups. Points will be labeled with the vector names, the
+\code{labels} parameter, or by index otherwise.
 }
 \examples{
-with(mtcars, idot(mpg, gear))
+## basic usage with named vectors
+idot(setNames(mtcars$mpg, rownames(mtcars)))
 
+## using group and subgroup (a vector of logicals to color points)
 with(mtcars,
      idot(mpg, gear, subgroup = am == 1, cex = 5, ylim = c(0, 40),
           labels = rownames(mtcars)))
 
+## labels parameter supports additional formatting with html tags
 with(ivolcano,
      idot(logFC, substr(rownames(ivolcano), 1, 1),
           subgroup = pval < 0.05, xlab = 'Treatment arm',

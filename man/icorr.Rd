@@ -8,7 +8,7 @@ icorr(mat, group, col, labels = NULL, cluster = TRUE,
   cor_method = "pearson", scatterplots = TRUE, plotOpts = NULL)
 }
 \arguments{
-\item{mat}{data matrix (observations x variables)}
+\item{mat}{data matrix (observations x variables) of numeric values}
 
 \item{group}{vector of grouping (\code{\link{factor}}-like) variables for
 each observation}
@@ -35,7 +35,12 @@ underlying data will be included}
 \code{\link{icorrOpts}}}
 }
 \description{
-Interactive correlation matrices with optional scatter plots.
+Interactive correlation matrices (heat maps) with optional scatter plots.
+
+Variables will be clustered (see details) and reordered by default. Cells
+will be labeled with the column names of the input data, and if a scatter
+plot is created, points will be labeled with the row names (this can be
+over-ridden by using the \code{labels} parameter).
 }
 \details{
 If \code{col} is given with no \code{group} variable, the colors for each
@@ -53,6 +58,7 @@ a vector or a list with a named vector, \code{"order"}.
 ## heatmap only
 icorr(mtcars, scatterplots = FALSE)
 
+## with scatter plots
 icorr(mtcars, group = mtcars$cyl, col = c('blue','red','green'),
       plotOpts = list(corcolors = heat.colors(3)))
 

@@ -8,7 +8,7 @@ icurve(mat, labels, group, iscatter1 = NULL, iscatter2 = NULL,
   plotOpts = NULL)
 }
 \arguments{
-\item{mat}{a numeric matrix, \code{nobs x ntimes}}
+\item{mat}{a numeric matrix, \code{observations x timepoints}}
 
 \item{labels}{optional character vector or named list of character vectors
 to label each point; if \code{NULL}, points will be labeled by index}
@@ -17,18 +17,24 @@ to label each point; if \code{NULL}, points will be labeled by index}
 
 \item{iscatter1}{a numeric matrix or \code{NULL}, \code{nobs x 2}}
 
-\item{iscatter2}{a numeric matrix or \code{NULL}, \code{nobs x 2}}
+\item{iscatter2}{see \code{iscatter1}}
 
 \item{plotOpts}{list of additional plot options; see
 \code{\link{icurveOpts}}}
 }
 \description{
 Interactive curves over time with optional interactive scatter plots.
+
+Each timepoint is a column of \code{mat}, that is, times are treated as
+discrete and assumed to be uniformly-spaced. Observations will be linked
+across all plots (curves and optional scatter plots) by row index, so
+observations should be in the same order in all data provided.
 }
 \examples{
-icurve(matrix(AirPassengers, ncol = 12, byrow = TRUE),
-       labels = 1949:1960)
+## basic usage, no scatter plots
+icurve(matrix(AirPassengers, ncol = 12, byrow = TRUE), labels = 1949:1960)
 
+## connecting observations over time with additional linked scatter plots
 set.seed(1)
 n <- 25
 ## 25 observations and 5 timepoints

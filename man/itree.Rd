@@ -22,11 +22,17 @@ same length as \code{y}}
 }
 \description{
 Interactive tree plot with search bar.
+
+Any numeric data can be plotted on the y-axis but the x-axis should be
+discrete groups. Points will be labeled with their \emph{unique} names
+and y-value.
 }
 \examples{
+## basic usage with and without groups
 itree(setNames(rnorm(10), letters[1:10]))
-itree(setNames(rnorm(20), letters[1:20]), 1:4)
+itree(setNames(rnorm(20), letters[1:20]), group = 1:4)
 
+## another example
 set.seed(1)
 n <- 100
 ng <- 5
@@ -34,6 +40,20 @@ gr <- sort(sample(LETTERS[1:ng], n, replace = TRUE))
 yv <- kinda_sort(runif(n, -1, 1), n = n / 2) * 100
 itree(yv, gr, main = 'Subject response from baseline',
       ylim = c(-100,100), xlab = 'Treatment arm', ylab = '\% change')
+
+## search is more useful with lots of data
+set.seed(1)
+p0 <- function(x) paste0(x, collapse = '')
+n <- 500
+gr <- replicate(n, (function()
+  p0(sample(c('A','T','C','G'), 15, replace = TRUE)))())
+y <- setNames(rpois(n, 40), gr)
+
+## hacky way to remove tick labels which start running together
+gr_labels <- Map(function(x) p0(rep(' ', x)), sequence(n))
+
+itree(y, unlist(gr_labels), ylab = 'Frequency', xlab = 'Sequence',
+      plotOpts = list(tickwidth = 2, linewidth = 5, width = 2000))
 }
 \seealso{
 \code{\link{iscatter}}, \code{\link{icorr}}, \code{\link{itree}},
