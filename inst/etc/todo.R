@@ -1,3 +1,4 @@
+## incorporate some rCharts
 ## add option to save plots in different formats
 ## add option to open plots in browser instead of viewer
 
@@ -16,4 +17,3 @@ if (!use_viewer) {
 print(getOption('browser'))
 print(getOption('viewer'))
 options(device = '')
-
