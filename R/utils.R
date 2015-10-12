@@ -1,4 +1,6 @@
-## utils
+### utils
+# numeric2col, rm_alpha, rm_alpha_plotOpts, recycle, get_labels
+###
 
 
 numeric2col <- function(x) {

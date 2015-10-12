@@ -64,7 +64,7 @@ with(ivolcano,
               col = c('lightgrey','green'),
               labels = list(
                 ' ' = rownames(ivolcano),
-                'log2(FC)' = round(logFC, 2),
+                'log<sub>2</sub>(FC)' = round(logFC, 2),
                 '<i>p</i>-value' = format.pval(ivolcano$pval, digits = 2,
                                                eps = .05))))
 }
