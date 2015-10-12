@@ -11,6 +11,7 @@
 * [tree maps](#tree-maps)  
 * [trend lines](#trend-lines)  
 * [customizations](#customizations)  
+* [saving iplots](#saving-iplots)  
 * [install](#install)  
 
 [iplotr](http://github.com/raredd/iplotr) is a fork of Karl Broman's [R/qtlcharts](http://kbroman.org/qtlcharts) R package to create interactive charts aimed at QTL data for use with [R/qtl](http://www.rqtl.org).
@@ -157,6 +158,15 @@ Each type of plot has its own set of options and customizations that affect the 
 
 See `?iplotOpts` for a list of the plots in this package as well as links to the lists of options for each plot.
 
+### saving iplots
+
+To save an interactive plot (html widget), you can use the `saveWidget` function from the [htmlwidgets](http://www.htmlwidgets.org) package. It is recommended to use `selfcontained = TRUE` (default) when saving widgets as html files--file sizes will be larger, but the plots will not depend on external resources to be displayed properly.
+
+```{r, eval=FALSE}
+htmlwidgets::saveWidget(file = './scatter_plot.html',
+  iscatter(rnorm(10), runif(10))
+)
+```
 
 ### install
 
