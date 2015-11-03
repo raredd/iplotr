@@ -82,18 +82,18 @@ iscatter <- function(x, y = NULL, group, col, cex = 3,
   }
   if (missing(group)) {
     if (missing(col)) {
-      group <- recycle(x, 1)
+      group <- rep_len(1, length(x))
       col <- NULL
     } else {
-      group <- recycle(x, seq_along(col))
+      group <- rep_len(seq_along(col), length(x))
       col <- numeric2col(col)
     }
   } else {
     if (missing(col)) {
       col <- NULL
-      group <- group2numeric(recycle(x, group))
+      group <- group2numeric(rep_len(group, length(x)))
     } else {
-      group <- group2numeric(recycle(x, group))
+      group <- group2numeric(rep_len(group, length(x)))
       col <- numeric2col(col)
     }
   }
@@ -171,11 +171,12 @@ idot <- function(y, group, cex = 3, subgroup,
                  labels = NULL, plotOpts = NULL) {
   xl <- if (missing(group)) 'group' else deparse(substitute(group))
   yl <- deparse(substitute(y))
-  group <- recycle(y, if (missing(group)) ' ' else group)
+  group <- rep_len(if (missing(group)) ' ' else group, length(y))
   group_levels <- sort(unique(group))
   group <- group2numeric(group)
   ## diff colors are made by sign in matrix - only two groups possible
-  wh <- if (!missing(subgroup)) ifelse(subgroup, 1, -1) else recycle(y, 1)
+  wh <- if (!missing(subgroup))
+    ifelse(subgroup, 1, -1) else rep_len(1, length(y))
   
   ## named vectors not supported in jsonlite
   if (!is.null(nn <- names(y)))
@@ -273,15 +274,15 @@ icorr <- function(mat, group, col, labels = NULL, cluster = TRUE,
                   plotOpts = NULL) {
   
   mat <- as.matrix(mat)
-  nr <- seq.int(nrow(mat))
+  nr <- nrow(mat)
   if (!is.null(labels))
-    rownames(mat) <- get_labels(labels, nr)
+    rownames(mat) <- get_labels(labels, seq.int(nr))
   if (missing(group)) {
     if (missing(col)) {
-      group <- recycle(nr, 1)
+      group <- rep_len(1, nr)
       col <- NULL
     } else {
-      group <- recycle(nr, seq_along(col))
+      group <- rep_len(seq_along(col), nr)
       col <- numeric2col(col)
     }
   } else {
@@ -290,7 +291,7 @@ icorr <- function(mat, group, col, labels = NULL, cluster = TRUE,
       group <- group2numeric(group)
     } else {
       group <- group2numeric(group)
-      col <- numeric2col(recycle(seq.int(unique(group)), col))
+      col <- numeric2col(rep_len(col, length(unique(group))))
     }
   }
   stopifnot(class(cluster) %in% c('logical','function'))
@@ -378,7 +379,7 @@ itree <- function(y, group, ylim = NULL, xlab = NULL, ylab = NULL,
   yl <- deparse(substitute(y))
   ## reverse ylim since default axis is reversed
   ylim <- rev(if (is.null(ylim)) range(y) else ylim)
-  group <- recycle(y, if (missing(group)) 1 else group)
+  group <- rep_len(if (missing(group)) 1 else group, length(y))
   
   ## make sure y names are unique--search is not useful without proper names
   ## doesnt seem to work with some characters or names with leading digits
@@ -487,7 +488,7 @@ icurve <- function(mat, labels, group, iscatter1 = NULL, iscatter2 = NULL,
     scatter2 <- NULL
   }
   times <- seq.int(nc)
-  group <- recycle(seq.int(nr), if (missing(group)) 1 else group)
+  group <- rep_len(if (missing(group)) 1 else group, nr)
   group <- group2numeric(group)
   indID <- if (!missing(labels)) get_labels(labels, nr) else rownames(mat)
   dimnames(mat) <- dimnames(iscatter) <- dimnames(iscatter2) <-

@@ -1,5 +1,5 @@
 ### utils
-# numeric2col, rm_alpha, rm_alpha_plotOpts, recycle, get_labels
+# numeric2col, rm_alpha, rm_alpha_plotOpts, get_labels
 ###
 
 
@@ -25,15 +25,6 @@ rm_alpha_plotOpts <- function(co) {
   co
 }
 
-recycle <- function(x, y) {
-  ## for a vector y, repeats y to length of x
-  ## recycle(1:5, 1:2)
-  ## recycle(1:2, c('red','blue','green'))
-  lx <- length(x)
-  ly <- length(y)
-  rep(y, ceiling(lx / ly))[seq_along(x)]
-}
-
 get_labels <- function(x, len) {
   ## create labels from a list of label info
   ## if any elements of the list is < length(x), items are recycled to len
@@ -41,9 +32,9 @@ get_labels <- function(x, len) {
   ## l <- with(mtcars, list(' ' = rownames(mtcars), mpg = mpg, hp = hp))
   ## get_labels(l, 32)
   if (!is.list(x))
-    return(recycle(seq.int(len), x))
+    return(rep_len(x, len))
   lx <- seq_along(x)
-  x <- lapply(x, function(x) recycle(seq.int(len), x))
+  x <- lapply(x, function(x) rep_len(x, len))
   nx <- names(x)
   names(x) <- ifelse(nzchar(nx), nx, seq_along(nx))
   fmt <- paste0(rep('%s$:$ %s', length(lx)), collapse ='<br />')
