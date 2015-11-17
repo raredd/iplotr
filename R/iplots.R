@@ -276,7 +276,7 @@ icorr <- function(mat, group, col, labels = NULL, cluster = TRUE,
   mat <- as.matrix(mat)
   nr <- nrow(mat)
   if (!is.null(labels))
-    rownames(mat) <- get_labels(labels, seq.int(nr))
+    rownames(mat) <- get_labels(labels, nr)
   if (missing(group)) {
     if (missing(col)) {
       group <- rep_len(1, nr)
