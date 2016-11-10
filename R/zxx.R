@@ -1,6 +1,6 @@
 ### utils needed from qtlcharts
 # getPlotSize, getScreenSize, setScreenSize, group2numeric, add2chartOpts,
-# convert_map, convert4iplotcorr, convert_curves, convert_scat, grabarg
+# convert_map, convert4iplotcorr, grabarg
 ###
 
 getPlotSize <- function(aspectRatio) {
@@ -39,11 +39,17 @@ setScreenSize <- function(size = c("normal", "small", "large"), height, width) {
   options(qtlchartsScreenSize = screensize)
 }
 
-group2numeric <- function(group) {
+group2numeric <- function(group, preserveNA = FALSE) {
   ## qtlcharts:::group2numeric
+  if (is.null(group)) 
+    return(NULL)
   if (is.factor(group)) 
-    return(as.numeric(group))
-  match(group, sort(unique(group)))
+    group <- as.numeric(group)
+  else if (!is.numeric(group)) 
+    group <- match(group, sort(unique(group)))
+  if (!preserveNA && any(is.na(group))) 
+    group[is.na(group)] <- max(group, na.rm = TRUE) + 1L
+  group
 }
 
 add2chartOpts <- function(chartOpts, ...) {
@@ -124,18 +130,7 @@ convert4iplotcorr <- function(dat, group, rows, cols, reorder = FALSE, corr,
   output
 }
 
-convert_curves <- function(times, curvedata, group, indID) {
-  ## qtlcharts:::convert_curves
-  list(x = times, data = curvedata, group = group, indID = indID)
-}
-
-convert_scat <- function(scatdata, group, indID) {
-  ## qtlcharts:::convert_scat
-  if (is.null(scatdata)) 
-    return(NULL)
-  list(data = scatdata, group = group, indID = indID)
-}
-
-grabarg <- function(arguments, argname, default)
+grabarg <- function(arguments, argname, default) {
   ## qtlcharts:::grabarg
   ifelse(argname %in% names(arguments), arguments[[argname]], default)
+}

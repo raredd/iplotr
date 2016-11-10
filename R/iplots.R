@@ -28,6 +28,7 @@
 #' to label each point; if \code{NULL}, points will be labeled by index
 #' @param plotOpts list of additional plot options; see
 #' \code{\link{iscatterOpts}}
+#' @param digits integer indicating number of significant digits to use
 #' 
 #' @seealso
 #' \code{\link{icorr}}, \code{\link{idot}}, \code{\link{itree}},
@@ -66,7 +67,7 @@
 iscatter <- function(x, y = NULL, group, col, cex = 3,
                      xlim = NULL, ylim = NULL,
                      xlab = NULL, ylab = NULL, main = NULL,
-                     labels = NULL, plotOpts = NULL) {
+                     labels = NULL, plotOpts = NULL, digits = NULL) {
   if (is.null(y)) {
     xl <- 'Index'
     yl <- deparse(substitute(x))
@@ -109,6 +110,8 @@ iscatter <- function(x, y = NULL, group, col, cex = 3,
                pointsize = cex, xlim = xlim, ylim = ylim, pointcolor = col)
   x <- list(data = data.frame(x = x, y = y, group = group, indID = labels),
             chartOpts = rm_alpha_plotOpts(c(opts, plotOpts)))
+  if (!is.null(digits)) 
+    attr(x, 'TOJSON_ARGS') <- list(digits = digits)
   defaultAspect <- 1.33
   browsersize <- getPlotSize(defaultAspect)
   
@@ -128,17 +131,19 @@ iscatter <- function(x, y = NULL, group, col, cex = 3,
 #' discrete groups. Points will be labeled with the vector names, the
 #' \code{labels} parameter, or by index otherwise.
 #' 
-#' @param y numeric vector
-#' @param group vector of grouping (\code{\link{factor}}-like) variables the
-#' same length as \code{y}
+#' @param x a numeric vector of y values (if \code{y} is \code{NULL}) or if
+#' \code{y} is given, a vector of x values; if \code{x} is an named vector,
+#' these labels will be passed on to \code{labels}
+#' @param y optional numeric vector of y values; if missing, \code{x} is used
+#' @param group optional vector of categories for coloring points
 #' @param cex point size in pixels
-#' @param subgroup a logical vector the same length as \code{y}
 #' @param xlim,ylim x- and y-limits
 #' @param xlab,ylab,main the x-, y-, and main labels
 #' @param labels optional character vector or named list of character vectors
 #' to label each point; if \code{NULL}, points will be labeled by index
 #' @param plotOpts list of additional plot options; see
 #' \code{\link{idotOpts}}
+#' @param digits integer indicating number of significant digits to use
 #' 
 #' @seealso
 #' \code{\link{iscatter}}, \code{\link{icorr}}, \code{\link{itree}},
@@ -150,13 +155,13 @@ iscatter <- function(x, y = NULL, group, col, cex = 3,
 #' 
 #' ## using group and subgroup (a vector of logicals to color points)
 #' with(mtcars,
-#'      idot(mpg, gear, subgroup = am == 1, cex = 5, ylim = c(0, 40),
+#'      idot(gear, mpg, group = am + 1L, cex = 5, ylim = c(0, 40),
 #'           labels = rownames(mtcars)))
 #' 
 #' ## labels parameter supports additional formatting with html tags
 #' with(ivolcano,
-#'      idot(logFC, substr(rownames(ivolcano), 1, 1),
-#'           subgroup = pval < 0.05, xlab = 'Treatment arm',
+#'      idot(substr(rownames(ivolcano), 1, 1), logFC,
+#'           group = cut(pval, c(0, 0.05, .1, 1)), xlab = 'Treatment arm',
 #'           labels = list(
 #'             ' ' = rownames(ivolcano),
 #'             'log2(FC)' = round(logFC, 2),
@@ -165,37 +170,49 @@ iscatter <- function(x, y = NULL, group, col, cex = 3,
 #' 
 #' @export
 
-idot <- function(y, group, cex = 3, subgroup,
+idot <- function(x, y = NULL, group = NULL, cex = 3,
                  xlim = NULL, ylim = NULL,
                  xlab = NULL, ylab = NULL, main = NULL,
-                 labels = NULL, plotOpts = NULL) {
-  xl <- if (missing(group)) 'group' else deparse(substitute(group))
+                 labels = NULL, plotOpts = NULL, digits = NULL) {
+  xl <- deparse(substitute(x))
   yl <- deparse(substitute(y))
-  group <- rep_len(if (missing(group)) ' ' else group, length(y))
-  group_levels <- sort(unique(group))
+  
+  if (is.null(group)) 
+    group <- rep(1L, length(x))
+  stopifnot(length(group) == length(x))
   group <- group2numeric(group)
-  ## diff colors are made by sign in matrix - only two groups possible
-  wh <- if (!missing(subgroup))
-    ifelse(subgroup, 1, -1) else rep_len(1, length(y))
+  
+  if (is.character(x))
+    x <- group2numeric(x, preserveNA = TRUE)
+  if (is.null(y)) {
+    y <- x
+    x <- rep_len(' ', length(x))
+  }
   
   ## named vectors not supported in jsonlite
   if (!is.null(nn <- names(y)))
     names(y) <- NULL
-  labels <- if (is.null(labels)) nn else get_labels(labels, length(y))
+  
+  ll <- deparse(substitute(labels))
+  labels <- if (is.null(labels)) nn else {
+    if (!is.list(labels))
+      labels <- setNames(list(labels), ll)
+    if (!is.null(nn))
+      labels <- c(list(' ' = nn), labels)
+    get_labels(labels, length(y))
+  }
   
   opts <- list(xlab = xlab %||% xl, ylab = ylab %||% yl, title = main,
                pointsize = cex, xlim = xlim, ylim = ylim)
   x <- list(
-    data = list(
-      ## change color by sign
-      geno = matrix(group, nrow = 1) * wh, pheno = y, indID = labels,
-      chrByMarkers = list(group = "un"), chrtype = list(un = "A"),
-      genonames = list(A = group_levels)),
+    data = list(x = x, y = y, indID = labels, group = group),
     chartOpts = rm_alpha_plotOpts(c(opts, plotOpts)))
+  if (!is.null(digits)) 
+    attr(x, 'TOJSON_ARGS') <- list(digits = digits)
   defaultAspect <- 1
   browsersize <- getPlotSize(defaultAspect)
   
-  htmlwidgets::createWidget(name = 'iplotPXG', x = x,
+  htmlwidgets::createWidget(name = 'idotplot', x = x,
     width = plotOpts$width, height = plotOpts$height,
     sizingPolicy = htmlwidgets::sizingPolicy(
       browser.defaultWidth = browsersize$width,
@@ -243,6 +260,7 @@ idot <- function(y, group, cex = 3, subgroup,
 #' underlying data will be included
 #' @param plotOpts list of additional plot options; see
 #' \code{\link{icorrOpts}}
+#' @param digits integer indicating number of significant digits to use
 #' 
 #' @seealso
 #' \code{\link{iscatter}}, \code{\link{idot}}, \code{\link{itree}},
@@ -271,7 +289,7 @@ idot <- function(y, group, cex = 3, subgroup,
 
 icorr <- function(mat, group, col, labels = NULL, cluster = TRUE,
                   cor_method = 'pearson', scatterplots = TRUE,
-                  plotOpts = NULL) {
+                  plotOpts = NULL, digits = NULL) {
   
   mat <- as.matrix(mat)
   nr <- nrow(mat)
@@ -309,6 +327,8 @@ icorr <- function(mat, group, col, labels = NULL, cluster = TRUE,
     mat, group, reorder = cluster, rows = 1:ncol(mat), cols = 1:ncol(mat),
     corr = stats::cor(mat, use = 'pairwise.complete.obs', method = cor_method),
     scatterplots = scatterplots, corr_was_presubset = FALSE, cFUN = cFUN)
+  if (!is.null(digits)) 
+    attr(x, 'TOJSON_ARGS') <- list(digits = digits)
   defaultAspect <- 2
   browsersize <- getPlotSize(defaultAspect)
   
@@ -338,6 +358,7 @@ icorr <- function(mat, group, col, labels = NULL, cluster = TRUE,
 #' @param xlab,ylab,main the x-, y-, and main labels
 #' @param plotOpts list of additional plot options; see
 #' \code{\link{itreeOpts}}
+#' @param digits integer indicating number of significant digits to use
 #' 
 #' @seealso
 #' \code{\link{iscatter}}, \code{\link{icorr}}, \code{\link{itree}},
@@ -374,7 +395,7 @@ icorr <- function(mat, group, col, labels = NULL, cluster = TRUE,
 #' @export
 
 itree <- function(y, group, ylim = NULL, xlab = NULL, ylab = NULL,
-                  main = NULL, plotOpts = NULL) {
+                  main = NULL, plotOpts = NULL, digits = NULL) {
   xl <- deparse(substitute(group))
   yl <- deparse(substitute(y))
   ## reverse ylim since default axis is reversed
@@ -404,6 +425,8 @@ itree <- function(y, group, ylim = NULL, xlab = NULL, ylab = NULL,
                title = main, ylim = ylim)
   x <- list(data = map_list,
             chartOpts = rm_alpha_plotOpts(c(opts, plotOpts)))
+  if (!is.null(digits)) 
+    attr(x, 'TOJSON_ARGS') <- list(digits = digits)
   defaultAspect <- 1.5
   browsersize <- getPlotSize(defaultAspect)
   
@@ -433,6 +456,7 @@ itree <- function(y, group, ylim = NULL, xlab = NULL, ylab = NULL,
 #' @param iscatter2 see \code{iscatter1}
 #' @param plotOpts list of additional plot options; see
 #' \code{\link{icurveOpts}}
+#' @param digits integer indicating number of significant digits to use
 #' 
 #' @seealso
 #' \code{\link{icorr}}, \code{\link{idot}}, \code{\link{itree}},
@@ -468,7 +492,7 @@ itree <- function(y, group, ylim = NULL, xlab = NULL, ylab = NULL,
 #' @export
 
 icurve <- function(mat, labels, group, iscatter1 = NULL, iscatter2 = NULL,
-                   plotOpts = NULL) {
+                   plotOpts = NULL, digits = NULL) {
   mat <- as.matrix(mat)
   nr <- nrow(mat)
   nc <- ncol(mat)
@@ -491,12 +515,21 @@ icurve <- function(mat, labels, group, iscatter1 = NULL, iscatter2 = NULL,
   group <- rep_len(if (missing(group)) 1 else group, nr)
   group <- group2numeric(group)
   indID <- if (!missing(labels)) get_labels(labels, nr) else rownames(mat)
-  dimnames(mat) <- dimnames(iscatter) <- dimnames(iscatter2) <-
+  dimnames(mat) <- dimnames(iscatter1) <- dimnames(iscatter2) <-
     names(group) <- names(times) <- NULL
-  data_list <- list(curve_data = convert_curves(times, mat, group, indID),
-                    scatter1_data = convert_scat(iscatter1, group, indID),
-                    scatter2_data = convert_scat(iscatter2, group, indID))
+  
+  data_list <-
+    list(curve_data = list(x = list(times), y = mat, group = group, indID = indID))
+  if (!is.null(iscatter1))
+    data_list$scatter1_data <-
+    list(x = iscatter1[, 1], y = iscatter1[, 2], group = group, indID = indID)
+  if (!is.null(iscatter2))
+    data_list$scatter2_data <-
+    list(x = iscatter2[, 1], y = iscatter2[, 2], group = group, indID = indID)
+  
   x <- list(data = data_list, chartOpts = plotOpts)
+  if (!is.null(digits)) 
+    attr(x, 'TOJSON_ARGS') <- list(digits = digits)
   defaultAspect <- 1.25
   browsersize <- getPlotSize(defaultAspect)
   
