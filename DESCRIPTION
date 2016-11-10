@@ -1,16 +1,18 @@
 Package: iplotr
 Type: Package
 Title: Interactive plotting functions
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: person("Robert", "Redd", email = "raredd01@gmail.com",
   role = c("aut", "cre"))
+Author: Robert Redd
+Maintainer: Robert Redd <raredd01@gmail.com>
 Description: Generic interactive plots (using D3.js) based on qtlcharts.
 Depends:
   R (>= 2.15),
 Imports:
   htmlwidgets,
   jsonlite,
-  qtlcharts
+  qtlcharts (>= 0.7-8)
 Suggests:
   knitr
 License: MIT + file LICENSE
@@ -18,4 +20,4 @@ LazyData: yes
 URL: https://github.com/raredd/iplotr
 Roxygen: list(wrap = FALSE)
 VignetteBuilder: knitr
-RoxygenNote: 5.0.0
+RoxygenNote: 5.0.1

@@ -1,3 +1,12 @@
-plotr 0.0.1
+iplotr 0.0.2
 --------
+  * updates to idot, icurve to work with newest version of qtlcharts
+  * added x, group (deprecated subgroup) arguments to idot
+  * updated idot, icurve docs and examples to reflect changes
+  * some minor package reorganization
+  * TODO: itree, update vignettes, make param descriptions consistent
+
+iplotr 0.0.1
+--------
+  * qtlcharts 0.7-8 breaks iplotr 0.0.1 plots (idot, icurve, itree)
   * initial build
