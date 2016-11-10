@@ -6,7 +6,7 @@
 \usage{
 iscatter(x, y = NULL, group, col, cex = 3, xlim = NULL, ylim = NULL,
   xlab = NULL, ylab = NULL, main = NULL, labels = NULL,
-  plotOpts = NULL)
+  plotOpts = NULL, digits = NULL)
 }
 \arguments{
 \item{x, y}{vectors of x- and y-coordinates; if \code{y} is \code{NULL},
@@ -29,6 +29,8 @@ to label each point; if \code{NULL}, points will be labeled by index}
 
 \item{plotOpts}{list of additional plot options; see
 \code{\link{iscatterOpts}}}
+
+\item{digits}{integer indicating number of significant digits to use}
 }
 \description{
 Interactive scatter plot.

@@ -5,7 +5,8 @@
 \title{icorr}
 \usage{
 icorr(mat, group, col, labels = NULL, cluster = TRUE,
-  cor_method = "pearson", scatterplots = TRUE, plotOpts = NULL)
+  cor_method = "pearson", scatterplots = TRUE, plotOpts = NULL,
+  digits = NULL)
 }
 \arguments{
 \item{mat}{data matrix (observations x variables) of numeric values}
@@ -33,6 +34,8 @@ underlying data will be included}
 
 \item{plotOpts}{list of additional plot options; see
 \code{\link{icorrOpts}}}
+
+\item{digits}{integer indicating number of significant digits to use}
 }
 \description{
 Interactive correlation matrices (heat maps) with optional scatter plots.

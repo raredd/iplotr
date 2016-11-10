@@ -5,7 +5,7 @@
 \title{icurve}
 \usage{
 icurve(mat, labels, group, iscatter1 = NULL, iscatter2 = NULL,
-  plotOpts = NULL)
+  plotOpts = NULL, digits = NULL)
 }
 \arguments{
 \item{mat}{a numeric matrix, \code{observations x timepoints}}
@@ -21,6 +21,8 @@ to label each point; if \code{NULL}, points will be labeled by index}
 
 \item{plotOpts}{list of additional plot options; see
 \code{\link{icurveOpts}}}
+
+\item{digits}{integer indicating number of significant digits to use}
 }
 \description{
 Interactive curves over time with optional interactive scatter plots.

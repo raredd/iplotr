@@ -4,18 +4,20 @@
 \alias{idot}
 \title{idot}
 \usage{
-idot(y, group, cex = 3, subgroup, xlim = NULL, ylim = NULL, xlab = NULL,
-  ylab = NULL, main = NULL, labels = NULL, plotOpts = NULL)
+idot(x, y = NULL, group = NULL, cex = 3, xlim = NULL, ylim = NULL,
+  xlab = NULL, ylab = NULL, main = NULL, labels = NULL,
+  plotOpts = NULL, digits = NULL)
 }
 \arguments{
-\item{y}{numeric vector}
+\item{x}{a numeric vector of y values (if \code{y} is \code{NULL}) or if
+\code{y} is given, a vector of x values; if \code{x} is an named vector,
+these labels will be passed on to \code{labels}}
 
-\item{group}{vector of grouping (\code{\link{factor}}-like) variables the
-same length as \code{y}}
+\item{y}{optional numeric vector of y values; if missing, \code{x} is used}
+
+\item{group}{optional vector of categories for coloring points}
 
 \item{cex}{point size in pixels}
-
-\item{subgroup}{a logical vector the same length as \code{y}}
 
 \item{xlim, ylim}{x- and y-limits}
 
@@ -26,6 +28,8 @@ to label each point; if \code{NULL}, points will be labeled by index}
 
 \item{plotOpts}{list of additional plot options; see
 \code{\link{idotOpts}}}
+
+\item{digits}{integer indicating number of significant digits to use}
 }
 \description{
 Interactive dot plot.
@@ -40,13 +44,13 @@ idot(setNames(mtcars$mpg, rownames(mtcars)))
 
 ## using group and subgroup (a vector of logicals to color points)
 with(mtcars,
-     idot(mpg, gear, subgroup = am == 1, cex = 5, ylim = c(0, 40),
+     idot(gear, mpg, group = am + 1L, cex = 5, ylim = c(0, 40),
           labels = rownames(mtcars)))
 
 ## labels parameter supports additional formatting with html tags
 with(ivolcano,
-     idot(logFC, substr(rownames(ivolcano), 1, 1),
-          subgroup = pval < 0.05, xlab = 'Treatment arm',
+     idot(substr(rownames(ivolcano), 1, 1), logFC,
+          group = cut(pval, c(0, 0.05, .1, 1)), xlab = 'Treatment arm',
           labels = list(
             ' ' = rownames(ivolcano),
             'log2(FC)' = round(logFC, 2),

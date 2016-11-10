@@ -5,7 +5,7 @@
 \title{itree}
 \usage{
 itree(y, group, ylim = NULL, xlab = NULL, ylab = NULL, main = NULL,
-  plotOpts = NULL)
+  plotOpts = NULL, digits = NULL)
 }
 \arguments{
 \item{y}{a \emph{uniquely-named} numeric vector}
@@ -19,6 +19,8 @@ same length as \code{y}}
 
 \item{plotOpts}{list of additional plot options; see
 \code{\link{itreeOpts}}}
+
+\item{digits}{integer indicating number of significant digits to use}
 }
 \description{
 Interactive tree plot with search bar.
