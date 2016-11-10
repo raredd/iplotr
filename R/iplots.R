@@ -182,12 +182,13 @@ idot <- function(x, y = NULL, group = NULL, cex = 3,
   stopifnot(length(group) == length(x))
   group <- group2numeric(group)
   
-  if (is.character(x))
-    x <- group2numeric(x, preserveNA = TRUE)
   if (is.null(y)) {
     y <- x
     x <- rep_len(' ', length(x))
   }
+  
+  x_levels <- if (is.factor(x)) levels(x) else sort(unique(x))
+  x <- group2numeric(x, preserveNA = TRUE)
   
   ## named vectors not supported in jsonlite
   if (!is.null(nn <- names(y)))
@@ -203,7 +204,8 @@ idot <- function(x, y = NULL, group = NULL, cex = 3,
   }
   
   opts <- list(xlab = xlab %||% xl, ylab = ylab %||% yl, title = main,
-               pointsize = cex, xlim = xlim, ylim = ylim)
+               pointsize = cex, xlim = xlim, ylim = ylim,
+               xcategories = seq_along(x_levels), xcatlabels = x_levels)
   x <- list(
     data = list(x = x, y = y, indID = labels, group = group),
     chartOpts = rm_alpha_plotOpts(c(opts, plotOpts)))
