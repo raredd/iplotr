@@ -2,7 +2,10 @@
 # %||%, kinda_sort, interleave, ident
 ### 
 
+
 '%||%' <- function(x, y) if (is.null(x)) y else x
+
+islist <- function(x) inherits(x, 'list')
 
 #' Kinda sort
 #' 
@@ -20,6 +23,9 @@
 #' 
 #' @return
 #' \code{x} sorted approximately \code{(length(x) - n)/length(x)*100} percent.
+#' 
+#' @seealso
+#' \code{\link[rawr]{kinda_sort}}
 #' 
 #' @examples
 #' set.seed(1)
@@ -47,18 +53,17 @@ kinda_sort <- function(x, n, decreasing = FALSE, indices) {
 }
 
 interleave <- function(..., which) {
-  ## rawr::interleave
-  l <- list(...)
+  ## rawr::interleave without cbindx/rbindx capability
+  l <- if (islist(..1))
+    c(...) else list(...)
   if (all(sapply(l, function(x) is.null(dim(x)))))
     return(c(do.call('rbind', l)))
-  else {
-    if (missing(which))
-      stop('specify which: \'rbind\' or \'cbind\'')
-    if (which == 'rbind')
-      return(do.call('rbind', l)[order(sequence(sapply(l, nrow))), ])
-    else if (which == 'cbind')
-      return(do.call('cbind', l)[ , order(sequence(sapply(l, ncol)))])
-  }
+  
+  which <- match.arg(which, c('rbind', 'cbind'))
+  
+  if (which %in% 'rbind')
+    do.call(which, l)[order(sequence(sapply(l, nrow))), ]
+  else do.call(which, l)[, order(sequence(sapply(l, ncol)))]
 }
 
 ident <- function(..., num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE,

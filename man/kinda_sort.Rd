@@ -38,4 +38,7 @@ kinda_sort(x, indices = 2:5)
 # [1]  1  4  5  7  2  3  6  8  9 10
 
 }
+\seealso{
+\code{\link[rawr]{kinda_sort}}
+}
 
