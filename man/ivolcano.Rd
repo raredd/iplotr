@@ -18,4 +18,3 @@ Generated data for creating interactive volcano plots in \code{\link{idot}}
 and \code{\link{iscatter}} examples.
 }
 \keyword{datasets}
-

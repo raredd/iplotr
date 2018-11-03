@@ -4,7 +4,7 @@
 \alias{iscatter}
 \title{iscatter}
 \usage{
-iscatter(x, y = NULL, group, col, cex = 3, xlim = NULL, ylim = NULL,
+iscatter(x, y = NULL, group, col, cex = 5, xlim = NULL, ylim = NULL,
   xlab = NULL, ylab = NULL, main = NULL, labels = NULL,
   plotOpts = NULL, digits = NULL)
 }
@@ -33,7 +33,7 @@ to label each point; if \code{NULL}, points will be labeled by index}
 \item{digits}{integer indicating number of significant digits to use}
 }
 \description{
-Interactive scatter plot.
+Interactive scatter plot with labelled points.
 
 If \code{labels} is a vector, points are labeled as-is and recycled if
 necessary. Optionally, \code{labels} can be a \emph{named} list where each
@@ -44,7 +44,7 @@ are named vectors, points will be labeled without needing to use
 }
 \examples{
 ## basic usage
-iscatter(1:5, col = 1:5, cex = 5)
+iscatter(1:5, col = 1:5)
 
 ## using named vectors
 x <- with(mtcars, setNames(mpg, mpg))
@@ -52,27 +52,30 @@ y <- with(mtcars, setNames(wt, wt))
 iscatter(x, y)
 
 ## using the labels parameter
-with(mtcars,
-  iscatter(wt, mpg, group = cyl, col = 1:3, cex = 5,
+with(mtcars, {
+  iscatter(wt, mpg, group = cyl, col = 1:3,
            main = 'Motor Trend car road tests',
-           labels = list(model = rownames(mtcars), mpg = mpg, hp = hp)))
+           labels = list(model = rownames(mtcars), mpg = mpg, hp = hp))
+})
 
 ## compare with base graphics
 with(mtcars, plot(wt, mpg, col = factor(cyl), pch = 19))
 
 ## labels parameter supports additional formatting with html tags
-with(ivolcano,
-     iscatter(logFC, -log10(pval), group = pval < 0.05 & abs(logFC) > 1,
-              col = c('lightgrey','green'),
-              labels = list(
-                ' ' = rownames(ivolcano),
-                'log<sub>2</sub>(FC)' = round(logFC, 2),
-                '<i>p</i>-value' = format.pval(ivolcano$pval, digits = 2,
-                                               eps = .05))))
+with(ivolcano, {
+  iscatter(logFC, -log10(pval), group = pval < 0.05 & abs(logFC) > 1,
+           col = c('lightgrey','green'),
+           labels = list(
+             ' ' = rownames(ivolcano),
+             'log<sub>2</sub>(FC)' = round(logFC, 2),
+             '<i>p</i>-value' = format.pval(ivolcano$pval, digits = 2,
+                                            eps = .05)))
+})
 
 }
 \seealso{
-\code{\link{icorr}}, \code{\link{idot}}, \code{\link{itree}},
-\code{\link{icurve}}, \code{\link[qtlcharts]{iplot}}
-}
+\code{\link[qtlcharts]{iplot}} from the \pkg{qtlcharts} package
 
+Other iplots: \code{\link{icorr}}, \code{\link{icurve}},
+  \code{\link{idot}}, \code{\link{itree}}
+}

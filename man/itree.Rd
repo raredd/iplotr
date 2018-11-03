@@ -59,7 +59,8 @@ itree(y, unlist(gr_labels), ylab = 'Frequency', xlab = 'Sequence',
 
 }
 \seealso{
-\code{\link{iscatter}}, \code{\link{icorr}}, \code{\link{itree}},
-\code{\link{icurve}}, \code{\link[qtlcharts]{iplotMap}}
-}
+\code{\link[qtlcharts]{iplotMap}} from the \pkg{qtlcharts} package
 
+Other iplots: \code{\link{icorr}}, \code{\link{icurve}},
+  \code{\link{idot}}, \code{\link{iscatter}}
+}

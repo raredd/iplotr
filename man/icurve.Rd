@@ -48,20 +48,25 @@ mm <- mm[order(mm[, 5]), ]
 x1 <- cbind(1:n, kinda_sort(rnorm(n), n / 2))
 x2 <- cbind(1:n, kinda_sort(sample(1:100, n), n / 2))
 
-icurve(mat = mm, group = 1:25 \%\% 5 == 0,
-       iscatter1 = x1, iscatter2 = x2,
-       labels = list(
-         Patient = 1:25,
-         Disease = sample(c('ALL','CLL'), 25, replace = TRUE)),
-       plotOpts = list(
-         curves_xlab = 'Response evaluation time point',
-         curves_ylab = '\% response',
-         scat1_xlab = 'Patient', scat1_ylab = 'Lab var 1',
-         scat2_xlab = 'Patient', scat2_ylab = 'Lab var 2'))
+icurve(
+  mat = mm, group = 1:25 \%\% 5 == 0,
+  iscatter1 = x1, iscatter2 = x2,
+  labels = list(
+    Patient = 1:25,
+    Disease = sample(c('ALL','CLL'), 25, replace = TRUE)
+  ),
+  plotOpts = list(
+    curves_xlab = 'Response evaluation time point',
+    curves_ylab = '\% response',
+    scat1_xlab = 'Patient', scat1_ylab = 'Lab var 1',
+    scat2_xlab = 'Patient', scat2_ylab = 'Lab var 2'
+  )
+)
 
 }
 \seealso{
-\code{\link{icorr}}, \code{\link{idot}}, \code{\link{itree}},
-\code{\link{icurve}}, \code{\link[qtlcharts]{iplotCurves}}
-}
+\code{\link[qtlcharts]{iplotCurves}} from the \pkg{qtlcharts} package
 
+Other iplots: \code{\link{icorr}}, \code{\link{idot}},
+  \code{\link{iscatter}}, \code{\link{itree}}
+}

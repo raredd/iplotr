@@ -25,4 +25,3 @@ linked scatter plots (\code{\link{icorr}}).
 \code{NULL} \cr
 }
 }
-

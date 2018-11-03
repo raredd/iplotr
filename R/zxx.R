@@ -3,6 +3,7 @@
 # convert_map, convert4iplotcorr, grabarg
 ###
 
+
 getPlotSize <- function(aspectRatio) {
   ## qtlcharts:::getPlotSize
   screensize <- getScreenSize()
@@ -66,10 +67,13 @@ convert_map <- function(map) {
   ## qtlcharts:::convert_map
   chrnames <- names(map)
   map <- lapply(map, unclass)
-  map <- lapply(map, function(a) lapply(a, jsonlite::unbox))
+  chr <- rep(names(map), vapply(map, length, 1))
+  names(chr) <- NULL
+  pos <- unlist(map)
+  names(pos) <- NULL
   mnames <- unlist(lapply(map, names))
   names(mnames) <- NULL
-  list(chr = chrnames, map = map, markernames = mnames)
+  list(chr = chr, pos = pos, marker = mnames, chrname = chrnames)
 }
 
 convert4iplotcorr <- function(dat, group, rows, cols, reorder = FALSE, corr,
@@ -119,15 +123,14 @@ convert4iplotcorr <- function(dat, group, rows, cols, reorder = FALSE, corr,
     }
     corr <- corr[rows, cols]
   }
-  dimnames(corr) <- dimnames(dat) <- NULL
-  names(group) <- NULL
-  if (scatterplots) 
-    output <- list(indID = indID, var = variables, corr = corr, 
-                   rows = rows - 1, cols = cols - 1, dat = t(dat), group = group, 
-                   scatterplots = scatterplots)
-  else output <- list(indID = indID, var = variables, corr = corr, 
-                      rows = rows - 1, cols = cols - 1, scatterplots = scatterplots)
-  output
+  dimnames(corr) <- dimnames(dat) <- names(group) <- NULL
+  
+  if (scatterplots)
+    list(indID = indID, var = variables, corr = corr,
+         rows = rows - 1, cols = cols - 1, dat = t(dat), group = group,
+         scatterplots = scatterplots)
+  else list(indID = indID, var = variables, corr = corr,
+            rows = rows - 1, cols = cols - 1, scatterplots = scatterplots)
 }
 
 grabarg <- function(arguments, argname, default) {

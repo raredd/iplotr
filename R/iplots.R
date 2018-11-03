@@ -6,7 +6,7 @@
 #' iscatter
 #' 
 #' @description
-#' Interactive scatter plot.
+#' Interactive scatter plot with labelled points.
 #' 
 #' If \code{labels} is a vector, points are labeled as-is and recycled if
 #' necessary. Optionally, \code{labels} can be a \emph{named} list where each
@@ -30,13 +30,14 @@
 #' \code{\link{iscatterOpts}}
 #' @param digits integer indicating number of significant digits to use
 #' 
+#' @family iplots
+#' 
 #' @seealso
-#' \code{\link{icorr}}, \code{\link{idot}}, \code{\link{itree}},
-#' \code{\link{icurve}}, \code{\link[qtlcharts]{iplot}}
+#' \code{\link[qtlcharts]{iplot}} from the \pkg{qtlcharts} package
 #' 
 #' @examples
 #' ## basic usage
-#' iscatter(1:5, col = 1:5, cex = 5)
+#' iscatter(1:5, col = 1:5)
 #' 
 #' ## using named vectors
 #' x <- with(mtcars, setNames(mpg, mpg))
@@ -44,27 +45,29 @@
 #' iscatter(x, y)
 #' 
 #' ## using the labels parameter
-#' with(mtcars,
-#'   iscatter(wt, mpg, group = cyl, col = 1:3, cex = 5,
+#' with(mtcars, {
+#'   iscatter(wt, mpg, group = cyl, col = 1:3,
 #'            main = 'Motor Trend car road tests',
-#'            labels = list(model = rownames(mtcars), mpg = mpg, hp = hp)))
+#'            labels = list(model = rownames(mtcars), mpg = mpg, hp = hp))
+#' })
 #' 
 #' ## compare with base graphics
 #' with(mtcars, plot(wt, mpg, col = factor(cyl), pch = 19))
 #' 
 #' ## labels parameter supports additional formatting with html tags
-#' with(ivolcano,
-#'      iscatter(logFC, -log10(pval), group = pval < 0.05 & abs(logFC) > 1,
-#'               col = c('lightgrey','green'),
-#'               labels = list(
-#'                 ' ' = rownames(ivolcano),
-#'                 'log<sub>2</sub>(FC)' = round(logFC, 2),
-#'                 '<i>p</i>-value' = format.pval(ivolcano$pval, digits = 2,
-#'                                                eps = .05))))
+#' with(ivolcano, {
+#'   iscatter(logFC, -log10(pval), group = pval < 0.05 & abs(logFC) > 1,
+#'            col = c('lightgrey','green'),
+#'            labels = list(
+#'              ' ' = rownames(ivolcano),
+#'              'log<sub>2</sub>(FC)' = round(logFC, 2),
+#'              '<i>p</i>-value' = format.pval(ivolcano$pval, digits = 2,
+#'                                             eps = .05)))
+#' })
 #' 
 #' @export
 
-iscatter <- function(x, y = NULL, group, col, cex = 3,
+iscatter <- function(x, y = NULL, group, col, cex = 5,
                      xlim = NULL, ylim = NULL,
                      xlab = NULL, ylab = NULL, main = NULL,
                      labels = NULL, plotOpts = NULL, digits = NULL) {
@@ -115,11 +118,14 @@ iscatter <- function(x, y = NULL, group, col, cex = 3,
   defaultAspect <- 1.33
   browsersize <- getPlotSize(defaultAspect)
   
-  htmlwidgets::createWidget(name = 'iplot', x = x,
+  htmlwidgets::createWidget(
+    name = 'iplot', x = x,
     width = plotOpts$width, height = plotOpts$height,
     sizingPolicy = htmlwidgets::sizingPolicy(
       browser.defaultWidth = browsersize$width,
-      browser.defaultHeight = browsersize$height), package = 'qtlcharts')
+      browser.defaultHeight = browsersize$height
+    ), package = 'qtlcharts'
+  )
 }
 
 #' idot
@@ -139,56 +145,66 @@ iscatter <- function(x, y = NULL, group, col, cex = 3,
 #' @param cex point size in pixels
 #' @param xlim,ylim x- and y-limits
 #' @param xlab,ylab,main the x-, y-, and main labels
+#' @param names labels under each group of dots
 #' @param labels optional character vector or named list of character vectors
 #' to label each point; if \code{NULL}, points will be labeled by index
 #' @param plotOpts list of additional plot options; see
 #' \code{\link{idotOpts}}
 #' @param digits integer indicating number of significant digits to use
 #' 
+#' @family iplots
+#' 
 #' @seealso
-#' \code{\link{iscatter}}, \code{\link{icorr}}, \code{\link{itree}},
-#' \code{\link{icurve}}, \code{\link[qtlcharts]{iplotPXG}}
+#' \code{\link[qtlcharts]{iplotPXG}} from the \pkg{qtlcharts} package
 #' 
 #' @examples
 #' ## basic usage with named vectors
 #' idot(setNames(mtcars$mpg, rownames(mtcars)))
 #' 
 #' ## using group and subgroup (a vector of logicals to color points)
-#' with(mtcars,
-#'      idot(gear, mpg, group = am + 1L, cex = 5, ylim = c(0, 40),
-#'           labels = rownames(mtcars)))
+#' with(mtcars, {
+#'   idot(gear, mpg, group = am + 1L, cex = 5, ylim = c(0, 40),
+#'        labels = rownames(mtcars))
+#' })
 #' 
 #' ## labels parameter supports additional formatting with html tags
-#' with(ivolcano,
-#'      idot(substr(rownames(ivolcano), 1, 1), logFC,
-#'           group = cut(pval, c(0, 0.05, .1, 1)), xlab = 'Treatment arm',
-#'           labels = list(
-#'             ' ' = rownames(ivolcano),
-#'             'log2(FC)' = round(logFC, 2),
-#'             '<i>p</i>-value' = format.pval(ivolcano$pval, digits = 2,
-#'                                            eps = .05))))
+#' with(ivolcano, {
+#'   idot(substr(rownames(ivolcano), 1, 1), logFC,
+#'        group = cut(pval, c(0, 0.05, .1, 1)), xlab = 'Treatment arm',
+#'        labels = list(
+#'          ' ' = rownames(ivolcano),
+#'          'log2(FC)' = round(logFC, 2),
+#'          '<i>p</i>-value' = format.pval(ivolcano$pval, digits = 2,
+#'                                         eps = .05)))
+#' })
 #' 
 #' @export
 
-idot <- function(x, y = NULL, group = NULL, cex = 3,
+idot <- function(x, y = NULL, group = NULL, cex = 5,
                  xlim = NULL, ylim = NULL,
                  xlab = NULL, ylab = NULL, main = NULL,
-                 labels = NULL, plotOpts = NULL, digits = NULL) {
+                 names = NULL, labels = NULL,
+                 plotOpts = NULL, digits = NULL) {
   xl <- deparse(substitute(x))
   yl <- deparse(substitute(y))
-  
-  if (is.null(group)) 
-    group <- rep(1L, length(x))
-  stopifnot(length(group) == length(x))
-  group <- group2numeric(group)
   
   if (is.null(y)) {
     y <- x
     x <- rep_len(' ', length(x))
   }
+  x <- rep_len(x, length(y))
+  x <- as.factor(x)
   
-  x_levels <- if (is.factor(x)) levels(x) else sort(unique(x))
+  x_levels <- if (is.factor(x))
+    levels(x) else sort(unique(x))
+  x_labels <- if (is.null(names))
+    x_levels else rep_len(names, length(x_levels))
   x <- group2numeric(x, preserveNA = TRUE)
+  
+  if (is.null(group)) 
+    group <- rep_len(1L, length(x))
+  stopifnot(length(group) == length(x))
+  group <- group2numeric(group)
   
   ## named vectors not supported in jsonlite
   if (!is.null(nn <- names(y)))
@@ -203,9 +219,11 @@ idot <- function(x, y = NULL, group = NULL, cex = 3,
     get_labels(labels, length(y))
   }
   
-  opts <- list(xlab = xlab %||% xl, ylab = ylab %||% yl, title = main,
-               pointsize = cex, xlim = xlim, ylim = ylim,
-               xcategories = seq_along(x_levels), xcatlabels = x_levels)
+  opts <- list(
+    xlab = xlab %||% xl, ylab = ylab %||% yl, title = main,
+    pointsize = cex, xlim = xlim, ylim = ylim,
+    xcategories = seq_along(x_levels), xcatlabels = x_labels
+  )
   x <- list(
     data = list(x = x, y = y, indID = labels, group = group),
     chartOpts = rm_alpha_plotOpts(c(opts, plotOpts)))
@@ -214,12 +232,15 @@ idot <- function(x, y = NULL, group = NULL, cex = 3,
   defaultAspect <- 1
   browsersize <- getPlotSize(defaultAspect)
   
-  htmlwidgets::createWidget(name = 'idotplot', x = x,
+  htmlwidgets::createWidget(
+    name = 'idotplot', x = x,
     width = plotOpts$width, height = plotOpts$height,
     sizingPolicy = htmlwidgets::sizingPolicy(
       browser.defaultWidth = browsersize$width,
       browser.defaultHeight = browsersize$height, knitr.defaultWidth = 1000,
-      knitr.defaultHeight = 1000 / defaultAspect), package = 'qtlcharts')
+      knitr.defaultHeight = 1000 / defaultAspect
+    ), package = 'qtlcharts'
+  )
 }
 
 #' icorr
@@ -264,9 +285,10 @@ idot <- function(x, y = NULL, group = NULL, cex = 3,
 #' \code{\link{icorrOpts}}
 #' @param digits integer indicating number of significant digits to use
 #' 
+#' @family iplots
+#' 
 #' @seealso
-#' \code{\link{iscatter}}, \code{\link{idot}}, \code{\link{itree}},
-#' \code{\link{icurve}}, \code{\link[qtlcharts]{iplotCorr}}
+#' \code{\link[qtlcharts]{iplotCorr}} from the \pkg{qtlcharts} package
 #' 
 #' @examples
 #' ## heatmap only
@@ -292,9 +314,9 @@ idot <- function(x, y = NULL, group = NULL, cex = 3,
 icorr <- function(mat, group, col, labels = NULL, cluster = TRUE,
                   cor_method = 'pearson', scatterplots = TRUE,
                   plotOpts = NULL, digits = NULL) {
-  
   mat <- as.matrix(mat)
   nr <- nrow(mat)
+  
   if (!is.null(labels))
     rownames(mat) <- get_labels(labels, nr)
   if (missing(group)) {
@@ -315,33 +337,40 @@ icorr <- function(mat, group, col, labels = NULL, cluster = TRUE,
     }
   }
   stopifnot(class(cluster) %in% c('logical','function'))
+  
   if (is.function(cluster)) {
     cFUN <- cluster
     cluster <- TRUE
   } else cFUN <- NULL
   co <- plotOpts
-  opts <- list(cortitle = co$cortitle %||% 'Correlation matrix',
-               scattitle = co$scattitle %||% 'Scatter plot of values',
-               scatcolors = col)
+  opts <- list(
+    cortitle = co$cortitle %||% 'Correlation matrix',
+    scattitle = co$scattitle %||% 'Scatter plot of values',
+    scatcolors = col
+  )
   group <- group2numeric(group)
   
   data_list <- convert4iplotcorr(
-    mat, group, reorder = cluster, rows = 1:ncol(mat), cols = 1:ncol(mat),
+    mat, group, reorder = cluster,
+    rows = seq.int(ncol(mat)), cols = seq.int(ncol(mat)),
     corr = stats::cor(mat, use = 'pairwise.complete.obs', method = cor_method),
-    scatterplots = scatterplots, corr_was_presubset = FALSE, cFUN = cFUN)
+    scatterplots = scatterplots, corr_was_presubset = FALSE, cFUN = cFUN
+  )
   if (!is.null(digits)) 
     attr(x, 'TOJSON_ARGS') <- list(digits = digits)
   defaultAspect <- 2
   browsersize <- getPlotSize(defaultAspect)
   
-  htmlwidgets::createWidget(name = 'iplotCorr',
-    x = list(data = data_list,
-             chartOpts = rm_alpha_plotOpts(c(opts, plotOpts))),
+  htmlwidgets::createWidget(
+    name = 'iplotCorr',
+    x = list(data = data_list, chartOpts = rm_alpha_plotOpts(c(opts, plotOpts))),
     width = plotOpts$width, height = plotOpts$height,
     sizingPolicy = htmlwidgets::sizingPolicy(
       browser.defaultWidth = browsersize$width,
       browser.defaultHeight = browsersize$height, knitr.defaultWidth = 1000,
-      knitr.defaultHeight = 1000 / defaultAspect), package = 'qtlcharts')
+      knitr.defaultHeight = 1000 / defaultAspect
+    ), package = 'qtlcharts'
+  )
 }
 
 #' itree
@@ -362,9 +391,10 @@ icorr <- function(mat, group, col, labels = NULL, cluster = TRUE,
 #' \code{\link{itreeOpts}}
 #' @param digits integer indicating number of significant digits to use
 #' 
+#' @family iplots
+#' 
 #' @seealso
-#' \code{\link{iscatter}}, \code{\link{icorr}}, \code{\link{itree}},
-#' \code{\link{icurve}}, \code{\link[qtlcharts]{iplotMap}}
+#' \code{\link[qtlcharts]{iplotMap}} from the \pkg{qtlcharts} package
 #' 
 #' @examples
 #' ## basic usage with and without groups
@@ -416,11 +446,10 @@ itree <- function(y, group, ylim = NULL, xlab = NULL, ylab = NULL,
   # names(y) <- make.names(names(y))
   sp <- split(y, group)
   lg <- vapply(sp, length, integer(1))
-  map <- lapply(sp, function(x) {
-    attr(x, 'class') <- 'A'
-    x
-  })
-  class(map) <- 'map'
+  map <- structure(
+    lapply(sp, function(x) structure(x, class = 'A')),
+    class = 'map'
+  )
   map_list <- convert_map(map)
   
   opts <- list(xlab = xlab %||% xl, ylab = ylab %||% yl,
@@ -432,12 +461,15 @@ itree <- function(y, group, ylim = NULL, xlab = NULL, ylab = NULL,
   defaultAspect <- 1.5
   browsersize <- getPlotSize(defaultAspect)
   
-  htmlwidgets::createWidget(name = 'iplotMap', x = x,
+  htmlwidgets::createWidget(
+    name = 'iplotMap', x = x,
     width = plotOpts$width, height = plotOpts$height,
     sizingPolicy = htmlwidgets::sizingPolicy(
       browser.defaultWidth = browsersize$width,
       browser.defaultHeight = browsersize$height, knitr.defaultWidth = 1000,
-      knitr.defaultHeight = 1000 / defaultAspect), package = 'qtlcharts')
+      knitr.defaultHeight = 1000 / defaultAspect
+    ), package = 'qtlcharts'
+  )
 }
 
 #' icurve
@@ -460,9 +492,10 @@ itree <- function(y, group, ylim = NULL, xlab = NULL, ylab = NULL,
 #' \code{\link{icurveOpts}}
 #' @param digits integer indicating number of significant digits to use
 #' 
+#' @family iplots
+#' 
 #' @seealso
-#' \code{\link{icorr}}, \code{\link{idot}}, \code{\link{itree}},
-#' \code{\link{icurve}}, \code{\link[qtlcharts]{iplotCurves}}
+#' \code{\link[qtlcharts]{iplotCurves}} from the \pkg{qtlcharts} package
 #' 
 #' @examples
 #' ## basic usage, no scatter plots
@@ -480,16 +513,20 @@ itree <- function(y, group, ylim = NULL, xlab = NULL, ylab = NULL,
 #' x1 <- cbind(1:n, kinda_sort(rnorm(n), n / 2))
 #' x2 <- cbind(1:n, kinda_sort(sample(1:100, n), n / 2))
 #' 
-#' icurve(mat = mm, group = 1:25 %% 5 == 0,
-#'        iscatter1 = x1, iscatter2 = x2,
-#'        labels = list(
-#'          Patient = 1:25,
-#'          Disease = sample(c('ALL','CLL'), 25, replace = TRUE)),
-#'        plotOpts = list(
-#'          curves_xlab = 'Response evaluation time point',
-#'          curves_ylab = '% response',
-#'          scat1_xlab = 'Patient', scat1_ylab = 'Lab var 1',
-#'          scat2_xlab = 'Patient', scat2_ylab = 'Lab var 2'))
+#' icurve(
+#'   mat = mm, group = 1:25 %% 5 == 0,
+#'   iscatter1 = x1, iscatter2 = x2,
+#'   labels = list(
+#'     Patient = 1:25,
+#'     Disease = sample(c('ALL','CLL'), 25, replace = TRUE)
+#'   ),
+#'   plotOpts = list(
+#'     curves_xlab = 'Response evaluation time point',
+#'     curves_ylab = '% response',
+#'     scat1_xlab = 'Patient', scat1_ylab = 'Lab var 1',
+#'     scat2_xlab = 'Patient', scat2_ylab = 'Lab var 2'
+#'   )
+#' )
 #' 
 #' @export
 
@@ -498,6 +535,7 @@ icurve <- function(mat, labels, group, iscatter1 = NULL, iscatter2 = NULL,
   mat <- as.matrix(mat)
   nr <- nrow(mat)
   nc <- ncol(mat)
+  
   if (!is.null(iscatter1))
     iscatter1 <- as.matrix(iscatter1)
   if (!is.null(iscatter2))
@@ -513,6 +551,7 @@ icurve <- function(mat, labels, group, iscatter1 = NULL, iscatter2 = NULL,
     scatter1 <- scatter2
     scatter2 <- NULL
   }
+  
   times <- seq.int(nc)
   group <- rep_len(if (missing(group)) 1 else group, nr)
   group <- group2numeric(group)
@@ -524,10 +563,10 @@ icurve <- function(mat, labels, group, iscatter1 = NULL, iscatter2 = NULL,
     list(curve_data = list(x = list(times), y = mat, group = group, indID = indID))
   if (!is.null(iscatter1))
     data_list$scatter1_data <-
-    list(x = iscatter1[, 1], y = iscatter1[, 2], group = group, indID = indID)
+    list(x = iscatter1[, 1L], y = iscatter1[, 2L], group = group, indID = indID)
   if (!is.null(iscatter2))
     data_list$scatter2_data <-
-    list(x = iscatter2[, 1], y = iscatter2[, 2], group = group, indID = indID)
+    list(x = iscatter2[, 1L], y = iscatter2[, 2L], group = group, indID = indID)
   
   x <- list(data = data_list, chartOpts = plotOpts)
   if (!is.null(digits)) 
@@ -535,12 +574,14 @@ icurve <- function(mat, labels, group, iscatter1 = NULL, iscatter2 = NULL,
   defaultAspect <- 1.25
   browsersize <- getPlotSize(defaultAspect)
   
-  htmlwidgets::createWidget(name = 'iplotCurves', x = x,
+  htmlwidgets::createWidget(
+    name = 'iplotCurves', x = x,
     width = plotOpts$width, height = plotOpts$height,
     sizingPolicy = htmlwidgets::sizingPolicy(
       browser.defaultWidth = browsersize$width,
       browser.defaultHeight = browsersize$height,
       knitr.defaultWidth = 1000,
-      knitr.defaultHeight = 1000 / defaultAspect),
-    package = 'qtlcharts')
+      knitr.defaultHeight = 1000 / defaultAspect
+    ), package = 'qtlcharts'
+  )
 }

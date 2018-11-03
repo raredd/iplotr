@@ -2,10 +2,9 @@
 % Please edit documentation in R/iplotr-package.R
 \docType{package}
 \name{iplotr-package}
-\alias{iplotr}
 \alias{iplotr-package}
+\alias{iplotr}
 \title{Interactive plotting functions}
 \description{
 Generic interactive plots (using D3.js) based on qtlcharts.
 }
-

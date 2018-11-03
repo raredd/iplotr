@@ -78,7 +78,8 @@ icorr(dat, cluster = function(x) list(order = order(rowMeans(x))))
 
 }
 \seealso{
-\code{\link{iscatter}}, \code{\link{idot}}, \code{\link{itree}},
-\code{\link{icurve}}, \code{\link[qtlcharts]{iplotCorr}}
-}
+\code{\link[qtlcharts]{iplotCorr}} from the \pkg{qtlcharts} package
 
+Other iplots: \code{\link{icurve}}, \code{\link{idot}},
+  \code{\link{iscatter}}, \code{\link{itree}}
+}

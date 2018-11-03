@@ -41,4 +41,3 @@ width, gap) \tab \code{list(handle=true, force=false, width=15, gap=10)} \cr
 width, gap) \tab \code{list(handle=true, force=false, width=15, gap=10)} \cr
 }
 }
-

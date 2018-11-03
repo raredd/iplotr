@@ -41,4 +41,3 @@ kinda_sort(x, indices = 2:5)
 \seealso{
 \code{\link[rawr]{kinda_sort}}
 }
-

@@ -1,3 +1,8 @@
+iplotr 0.0.3
+--------
+  * updates to iplots to work with qtlcharts changes
+  * vignette, doc updates
+
 iplotr 0.0.2
 --------
   * updates to idot, icurve to work with newest version of qtlcharts

@@ -4,8 +4,8 @@
 \alias{idot}
 \title{idot}
 \usage{
-idot(x, y = NULL, group = NULL, cex = 3, xlim = NULL, ylim = NULL,
-  xlab = NULL, ylab = NULL, main = NULL, labels = NULL,
+idot(x, y = NULL, group = NULL, cex = 5, xlim = NULL, ylim = NULL,
+  xlab = NULL, ylab = NULL, main = NULL, names = NULL, labels = NULL,
   plotOpts = NULL, digits = NULL)
 }
 \arguments{
@@ -22,6 +22,8 @@ these labels will be passed on to \code{labels}}
 \item{xlim, ylim}{x- and y-limits}
 
 \item{xlab, ylab, main}{the x-, y-, and main labels}
+
+\item{names}{labels under each group of dots}
 
 \item{labels}{optional character vector or named list of character vectors
 to label each point; if \code{NULL}, points will be labeled by index}
@@ -43,23 +45,26 @@ discrete groups. Points will be labeled with the vector names, the
 idot(setNames(mtcars$mpg, rownames(mtcars)))
 
 ## using group and subgroup (a vector of logicals to color points)
-with(mtcars,
-     idot(gear, mpg, group = am + 1L, cex = 5, ylim = c(0, 40),
-          labels = rownames(mtcars)))
+with(mtcars, {
+  idot(gear, mpg, group = am + 1L, cex = 5, ylim = c(0, 40),
+       labels = rownames(mtcars))
+})
 
 ## labels parameter supports additional formatting with html tags
-with(ivolcano,
-     idot(substr(rownames(ivolcano), 1, 1), logFC,
-          group = cut(pval, c(0, 0.05, .1, 1)), xlab = 'Treatment arm',
-          labels = list(
-            ' ' = rownames(ivolcano),
-            'log2(FC)' = round(logFC, 2),
-            '<i>p</i>-value' = format.pval(ivolcano$pval, digits = 2,
-                                           eps = .05))))
+with(ivolcano, {
+  idot(substr(rownames(ivolcano), 1, 1), logFC,
+       group = cut(pval, c(0, 0.05, .1, 1)), xlab = 'Treatment arm',
+       labels = list(
+         ' ' = rownames(ivolcano),
+         'log2(FC)' = round(logFC, 2),
+         '<i>p</i>-value' = format.pval(ivolcano$pval, digits = 2,
+                                        eps = .05)))
+})
 
 }
 \seealso{
-\code{\link{iscatter}}, \code{\link{icorr}}, \code{\link{itree}},
-\code{\link{icurve}}, \code{\link[qtlcharts]{iplotPXG}}
-}
+\code{\link[qtlcharts]{iplotPXG}} from the \pkg{qtlcharts} package
 
+Other iplots: \code{\link{icorr}}, \code{\link{icurve}},
+  \code{\link{iscatter}}, \code{\link{itree}}
+}

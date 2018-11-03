@@ -33,4 +33,3 @@ xlabel, ylabel) \tab \code{list(xtitle=25, ytitle=30, xlabel=5, ylabel=5)} \cr
 \tab \code{ylab} \tab y-axis label \tab \code{''} \cr
 }
 }
-

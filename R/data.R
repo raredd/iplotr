@@ -14,4 +14,5 @@
 #' \tab \code{logFC} \tab \code{\link{log2}} fold-change \cr
 #' \tab \code{pval} \tab p-values corresponding to the fold-change \cr
 #' }
+
 'ivolcano'

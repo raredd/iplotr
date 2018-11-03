@@ -1,11 +1,15 @@
 ### stuff from rawr (github.com/raredd/rawr)
-# %||%, kinda_sort, interleave, ident
+# %||%, islist, kinda_sort, interleave, ident
 ### 
 
 
-'%||%' <- function(x, y) if (is.null(x)) y else x
+'%||%' <- function(x, y) {
+  if (is.null(x)) y else x
+}
 
-islist <- function(x) inherits(x, 'list')
+islist <- function(x) {
+  inherits(x, 'list')
+}
 
 #' Kinda sort
 #' 
@@ -71,9 +75,13 @@ ident <- function(..., num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE,
   ## rawr::ident
   if (length(l <- list(...)) < 2L)
     stop('must provide at least two objects')
-  l <- sapply(1:(length(l) - 1), function(x)
-    identical(l[x], l[x + 1], num.eq = num.eq, single.NA = single.NA,
-              attrib.as.set = attrib.as.set, ignore.bytecode = ignore.bytecode,
-              ignore.environment = ignore.environment))
+  
+  l <- sapply(seq.int(length(l) - 1), function(ii)
+    identical(
+      l[ii], l[ii + 1L], num.eq = num.eq, single.NA = single.NA,
+      attrib.as.set = attrib.as.set, ignore.bytecode = ignore.bytecode,
+      ignore.environment = ignore.environment)
+  )
+  
   all(l)
 }
