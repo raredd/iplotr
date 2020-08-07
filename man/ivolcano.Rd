@@ -4,12 +4,14 @@
 \name{ivolcano}
 \alias{ivolcano}
 \title{ivolcano data}
-\format{A data frame with 500 rows and 2 variables:
+\format{
+A data frame with 500 rows and 2 variables:
 
 \tabular{lll}{
 \tab \code{logFC} \tab \code{\link{log2}} fold-change \cr
 \tab \code{pval} \tab p-values corresponding to the fold-change \cr
-}}
+}
+}
 \usage{
 ivolcano
 }

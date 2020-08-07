@@ -10,6 +10,7 @@ Below is a list of options for tree plots (\code{\link{icurve}}).
 \tabular{rlll}{
 \tab \strong{option} \tab \strong{description} \tab \strong{default} \cr
 
+
 \tab \code{width} \tab width of plot in pixels \tab \code{1000} \cr
 \tab \code{height} \tab height of plot in pixels \tab \code{600} \cr
 \tab \code{margin} \tab margins in pixels (left, top, right, bottom,

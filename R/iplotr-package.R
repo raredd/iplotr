@@ -1,6 +1,6 @@
 #' Interactive plotting functions
 #'
-#' Generic interactive plots (using D3.js) based on qtlcharts.
+#' Generic interactive plots (using D3.js) based on \pkg{\link{qtlcharts}}.
 #' 
 #' @name iplotr-package
 #' @aliases iplotr

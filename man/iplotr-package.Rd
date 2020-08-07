@@ -6,5 +6,5 @@
 \alias{iplotr}
 \title{Interactive plotting functions}
 \description{
-Generic interactive plots (using D3.js) based on qtlcharts.
+Generic interactive plots (using D3.js) based on \pkg{\link{qtlcharts}}.
 }

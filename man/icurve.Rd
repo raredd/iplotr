@@ -4,8 +4,15 @@
 \alias{icurve}
 \title{icurve}
 \usage{
-icurve(mat, labels, group, iscatter1 = NULL, iscatter2 = NULL,
-  plotOpts = NULL, digits = NULL)
+icurve(
+  mat,
+  labels,
+  group,
+  iscatter1 = NULL,
+  iscatter2 = NULL,
+  plotOpts = NULL,
+  digits = NULL
+)
 }
 \arguments{
 \item{mat}{a numeric matrix, \code{observations x timepoints}}
@@ -29,7 +36,7 @@ Interactive curves over time with optional interactive scatter plots.
 
 Each timepoint is a column of \code{mat}, that is, times are treated as
 discrete and assumed to be uniformly-spaced. Observations will be linked
-across all plots (curves and optional scatter plots) by row index, so 
+across all plots (curves and optional scatter plots) by row index, so
 observations should be in the same order in all data provided.
 }
 \examples{
@@ -67,6 +74,12 @@ icurve(
 \seealso{
 \code{\link[qtlcharts]{iplotCurves}} from the \pkg{qtlcharts} package
 
-Other iplots: \code{\link{icorr}}, \code{\link{idot}},
-  \code{\link{iscatter}}, \code{\link{itree}}
+\code{\link[htmlwidgets]{saveWidget}}
+
+Other iplots: 
+\code{\link{icorr}()},
+\code{\link{idot}()},
+\code{\link{iscatter}()},
+\code{\link{itree}()}
 }
+\concept{iplots}

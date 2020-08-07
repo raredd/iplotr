@@ -35,7 +35,7 @@ icorr(mtcars, group = mtcars$cyl, col = c('red', 'blue','green','pink'))
 ## other options
 icorr(mtcars, cluster = FALSE,
       labels = with(mtcars, list(' ' = rownames(mtcars), mpg = mpg,
-                  '<i>p</i>-value' = rawr::pvalr(1 / exp(c(1:10,1:10,1:2))))))
+                  '<em>p</em>-value' = rawr::pvalr(1 / exp(c(1:10,1:10,1:2))))))
 
 
 ## cluster functions

@@ -4,9 +4,17 @@
 \alias{icorr}
 \title{icorr}
 \usage{
-icorr(mat, group, col, labels = NULL, cluster = TRUE,
-  cor_method = "pearson", scatterplots = TRUE, plotOpts = NULL,
-  digits = NULL)
+icorr(
+  mat,
+  group,
+  col,
+  labels = NULL,
+  cluster = TRUE,
+  cor_method = "pearson",
+  scatterplots = TRUE,
+  plotOpts = NULL,
+  digits = NULL
+)
 }
 \arguments{
 \item{mat}{data matrix (observations x variables) of numeric values}
@@ -80,6 +88,12 @@ icorr(dat, cluster = function(x) list(order = order(rowMeans(x))))
 \seealso{
 \code{\link[qtlcharts]{iplotCorr}} from the \pkg{qtlcharts} package
 
-Other iplots: \code{\link{icurve}}, \code{\link{idot}},
-  \code{\link{iscatter}}, \code{\link{itree}}
+\code{\link[htmlwidgets]{saveWidget}}
+
+Other iplots: 
+\code{\link{icurve}()},
+\code{\link{idot}()},
+\code{\link{iscatter}()},
+\code{\link{itree}()}
 }
+\concept{iplots}

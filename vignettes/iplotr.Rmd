@@ -177,6 +177,6 @@ htmlwidgets::saveWidget(
 ### install
 
 ```{r, eval=FALSE}
-install.packages('devtools')
+# install.packages('devtools')
 devtools::install_github('raredd/iplotr', build_vignettes = TRUE)
 ```

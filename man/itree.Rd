@@ -4,8 +4,16 @@
 \alias{itree}
 \title{itree}
 \usage{
-itree(y, group, ylim = NULL, xlab = NULL, ylab = NULL, main = NULL,
-  plotOpts = NULL, digits = NULL)
+itree(
+  y,
+  group,
+  ylim = NULL,
+  xlab = NULL,
+  ylab = NULL,
+  main = NULL,
+  plotOpts = NULL,
+  digits = NULL
+)
 }
 \arguments{
 \item{y}{a \emph{uniquely-named} numeric vector}
@@ -61,6 +69,12 @@ itree(y, unlist(gr_labels), ylab = 'Frequency', xlab = 'Sequence',
 \seealso{
 \code{\link[qtlcharts]{iplotMap}} from the \pkg{qtlcharts} package
 
-Other iplots: \code{\link{icorr}}, \code{\link{icurve}},
-  \code{\link{idot}}, \code{\link{iscatter}}
+\code{\link[htmlwidgets]{saveWidget}}
+
+Other iplots: 
+\code{\link{icorr}()},
+\code{\link{icurve}()},
+\code{\link{idot}()},
+\code{\link{iscatter}()}
 }
+\concept{iplots}

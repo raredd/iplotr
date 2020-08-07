@@ -4,9 +4,21 @@
 \alias{iscatter}
 \title{iscatter}
 \usage{
-iscatter(x, y = NULL, group, col, cex = 5, xlim = NULL, ylim = NULL,
-  xlab = NULL, ylab = NULL, main = NULL, labels = NULL,
-  plotOpts = NULL, digits = NULL)
+iscatter(
+  x,
+  y = NULL,
+  group,
+  col,
+  cex = 5,
+  xlim = NULL,
+  ylim = NULL,
+  xlab = NULL,
+  ylab = NULL,
+  main = NULL,
+  labels = NULL,
+  plotOpts = NULL,
+  digits = NULL
+)
 }
 \arguments{
 \item{x, y}{vectors of x- and y-coordinates; if \code{y} is \code{NULL},
@@ -68,14 +80,20 @@ with(ivolcano, {
            labels = list(
              ' ' = rownames(ivolcano),
              'log<sub>2</sub>(FC)' = round(logFC, 2),
-             '<i>p</i>-value' = format.pval(ivolcano$pval, digits = 2,
-                                            eps = .05)))
+             '<em>p</em>-value' =
+               format.pval(ivolcano$pval, digits = 2, eps = .05)))
 })
 
 }
 \seealso{
 \code{\link[qtlcharts]{iplot}} from the \pkg{qtlcharts} package
 
-Other iplots: \code{\link{icorr}}, \code{\link{icurve}},
-  \code{\link{idot}}, \code{\link{itree}}
+\code{\link[htmlwidgets]{saveWidget}}
+
+Other iplots: 
+\code{\link{icorr}()},
+\code{\link{icurve}()},
+\code{\link{idot}()},
+\code{\link{itree}()}
 }
+\concept{iplots}
