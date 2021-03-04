@@ -14,15 +14,28 @@
 * [saving iplots](#saving-iplots)  
 * [install](#install)  
 
-[iplotr](http://github.com/raredd/iplotr) is a fork of Karl Broman's [R/qtlcharts](http://kbroman.org/qtlcharts) R package to create interactive charts aimed at QTL data for use with [R/qtl](http://www.rqtl.org).
+[iplotr](http://github.com/raredd/iplotr) is a fork of Karl Broman's
+[R/qtlcharts](http://kbroman.org/qtlcharts) R package to create interactive
+charts aimed at QTL data for use with [R/qtl](http://www.rqtl.org).
 
-This package reformulates the core of `qtlcharts` into more generic plotting functions for any type of data. The plotting functions in this package were designed to be used like base R plotting functions and use familiar syntax with similar results.
+This package reformulates the core of `qtlcharts` into more generic plotting
+functions for any type of data. The plotting functions in this package were
+designed to be used like base R plotting functions and use familiar syntax
+with similar results.
 
-Interactive plots are particularly useful for exploratory data analysis within R but may also be included in [R Markdown](http://rmarkdown.rstudio.com) documents, an extension of [Markdown](http://daringfireball.net/projects/markdown/). [knitr](http://yihui.name/knitr/) can be used to write simply-marked-up text with chunks of R code, and output is converted to an html file for viewing in a web browser.
+Interactive plots are particularly useful for exploratory data analysis
+within R but may also be included in [R Markdown](http://rmarkdown.rstudio.com)
+documents, an extension of [Markdown](http://daringfireball.net/projects/markdown/).
+[knitr](http://yihui.name/knitr/) can be used to write simply-marked-up text
+with chunks of R code, and output is converted to an html file for viewing
+in a web browser.
 
-To include interactive plots within an R Markdown document, you just need to include the relevant calls to the R function within a code chunk as if you were creating any other type of plot.
+To include interactive plots within an R Markdown document, you just need to
+include the relevant calls to the R function within a code chunk as if you
+were creating any other type of plot.
 
-For more information on R Markdown and knitr, see Karl's [knitr in a knutshell](http://kbroman.org/knitr_knutshell/) tutorial.
+For more information on R Markdown and knitr, see Karl's
+[knitr in a knutshell](http://kbroman.org/knitr_knutshell/) tutorial.
 
 ```{r, message=FALSE}
 # knitr::opts_chunk$set(fig.width=8, fig.height=6, message=FALSE)
@@ -31,23 +44,32 @@ library('iplotr')
 
 ### scatter plots
 
-One of the most common types of plots, scatter plots, is created with the function `iscatter`.
+One of the most common types of plots, scatter plots, is created with the
+function `iscatter`.
 
 ```{r}
 iscatter(1:5, col = 1:5, cex = 5)
 ```
 
-The base R function `plot` will create a similar graph without the interactivity. Users familiar with R's base plotting functions will also be familiar with some of the parameters: `col`, `cex`, `xlim`/`ylim`, etc.
+The base R function `plot` will create a similar graph without the interactivity.
+Users familiar with R's base plotting functions will also be familiar with some
+of the parameters: `col`, `cex`, `xlim`/`ylim`, etc.
 
-However, there are some key differences. First, `col` is not a vector the same length as `x` for coloring individual points. Rather `col` is a vector having length equal to the number of desired groups. Points are colored according to the `group` to which they are assigned.
+However, there are some key differences. First, `col` is not a vector the same
+length as `x` for coloring individual points. Rather `col` is a vector having
+length equal to the number of desired groups. Points are colored according to
+the `group` to which they are assigned.
 
 ```{r}
-iscatter(1:5, group = c(1,1,1,2,3), col = 4:6, cex = 5)
+iscatter(1:5, group = c(1, 1, 1, 2, 3), col = 4:6, cex = 5)
 ```
 
-Another difference is the `labels` parameter. This argument appears in most of the interactive plots in this package and is used to label points and provide some useful information about each point.
+Another difference is the `labels` parameter. This argument appears in most of
+the interactive plots in this package and is used to label points and provide
+some useful information about each point.
 
-`labels` can be passed as either a character vector of labels for each point or as a `list` of labels which will be parsed and displayed in a convenient way.
+`labels` can be passed as either a character vector of labels for each point or
+as a `list` of labels which will be parsed and displayed in a convenient way.
 
 ```{r}
 labels = list(
@@ -56,52 +78,62 @@ labels = list(
   'No. of gears' = mtcars$gear
 )
 
-with(
-  mtcars, iscatter(wt, mpg, group = cyl, col = 1:3, labels = labels, cex = 5,
-                   main = 'Motor Trend car road tests')
-)
+with(mtcars, {
+  iscatter(wt, mpg, group = cyl, col = 1:3, labels = labels, cex = 5,
+           main = 'Motor Trend car road tests')
+})
 ```
 
 You can also use html tags in `labels` for better display.
 
 ```{r}
-v_labels <- list(' ' = rownames(ivolcano),
-                 'log<sub>2</sub>(FC)' = round(ivolcano$logFC, 2),
-                 '<i>p</i>-value' = sprintf('<font color=red>%s</font>',
-                              format.pval(ivolcano$pval, digits = 2, eps = .05)))
-with(
-  ivolcano, iscatter(logFC, -log10(pval), col = c('lightgrey','green'),
-                     group = pval < 0.05 & abs(logFC) > 1, labels = v_labels)
+v_labels <- list(
+  ' ' = rownames(ivolcano),
+  'log<sub>2</sub>(FC)' = round(ivolcano$logFC, 2),
+  '<i>p</i>-value' = sprintf('<font color=red>%s</font>',
+                             format.pval(ivolcano$pval, digits = 2, eps = 0.05))
 )
+with(ivolcano, {
+  iscatter(logFC, -log10(pval), col = c('lightgrey','green'),
+           group = pval < 0.05 & abs(logFC) > 1, labels = v_labels)
+})
 ```
 
 ### dot plots
 
-Dot plots are also useful to view data interactively with added information on each point. There is no `x` parameter here--instead the vector of `y` values are grouped along the x-axis using a vector of `group` data. Continuous values of `y` may be arranged by `group` resembling a pseudo boxplot-style plot.
+Dot plots are also useful to view data interactively with added information
+on each point. There is no `x` parameter here--instead the vector of `y` values
+are grouped along the x-axis using a vector of `group` data. Continuous values
+of `y` may be arranged by `group` resembling a pseudo boxplot-style plot.
 
 You can double-click any point to increase the size for quick identification later.
 
 ```{r}
-with(mtcars, idot(mpg, gear, labels = labels))
+with(mtcars, idot(gear, mpg, labels = labels))
 ```
 
-Points can further be colored using `subgroup` which should be a logical vector.
+Points can further be colored using `group` which should be a logical vector.
 
 ```{r}
-with(ivolcano,
-     idot(logFC, substr(rownames(ivolcano), 1, 1), subgroup = pval < 0.05,
-          xlab = 'Treatment arm', labels = v_labels))
+with(ivolcano, {
+  idot(substr(rownames(ivolcano), 1, 1), logFC,
+       group = cut(pval, c(0, 0.05, 0.1, 1)),
+       xlab = 'Treatment arm', labels = v_labels)
+})
 ```
 
 ### heat maps
 
-`icorr` creates a heat map from a matrix of numeric data with rows of observations and columns of variables where each cross-section of the matrix is (optionally) linked to a scatter plot of the underlying data.
+`icorr` creates a heat map from a matrix of numeric data with rows of observations
+and columns of variables where each cross-section of the matrix is (optionally)
+linked to a scatter plot of the underlying data.
 
 ```{r}
 icorr(mtcars, scatterplots = FALSE)
 ```
 
-`group`, `col`, and `labels` arguments are used the same as in `iscatter`. Additionally, the matrix can be clustered and the rows/columns reordered.
+`group`, `col`, and `labels` arguments are used the same as in `iscatter`.
+Additionally, the matrix can be clustered and the rows/columns reordered.
 
 ```{r}
 set.seed(1)
@@ -112,7 +144,9 @@ icorr(dat, cluster = TRUE, group = mtcars$cyl, labels = rownames(mtcars))
 
 ### tree maps
 
-This tree map is similar to `idot` but also features a search bar to find specific points easily. Continuous values of `y` may be arranged by `group` resembling a pseudo boxplot-style plot.
+This tree map is similar to `idot` but also features a search bar to find
+specific points easily. Continuous values of `y` may be arranged by `group`
+resembling a pseudo boxplot-style plot.
 
 ```{r}
 set.seed(1)
@@ -126,9 +160,13 @@ itree(yv, gr, main = 'Subject response from baseline',
 
 ### trend lines
 
-These curves showing observations with repeated measures over time can optionally be linked to up to two interactive scatter plots. `labels` and `group` vectors are used to provide labels and color both curves and points.
+These curves showing observations with repeated measures over time can optionally
+be linked to up to two interactive scatter plots. `labels` and `group` vectors are
+used to provide labels and color both curves and points.
 
-As individual curves are selected and highlighted, the corresponding data points on the scatter plots are also identified. Similarly, by highlighting points on either scatter plot, the curve linked to that observation is also highlighted.
+As individual curves are selected and highlighted, the corresponding data points
+on the scatter plots are also identified. Similarly, by highlighting points on
+either scatter plot, the curve linked to that observation is also highlighted.
 
 ```{r}
 set.seed(1)
@@ -139,28 +177,38 @@ mm <- mm[order(mm[, 5]), ]
 x1 <- cbind(1:n, kinda_sort(rnorm(n), n / 2))
 x2 <- cbind(1:n, kinda_sort(sample(1:100, n), n / 2))
 
-icurve(mat = mm, group = 1:25 %% 5 == 0,
-       iscatter1 = x1, iscatter2 = x2,
-       labels = list(
-         Patient = 1:25,
-         Disease = sample(c('NHL','HL'), 25, replace = TRUE)),
-       plotOpts = list(
-         curves_xlab = 'Response evaluation time point',
-         curves_ylab = '% response',
-         scat1_xlab = 'Patient', scat1_ylab = 'Lab var 1',
-         scat2_xlab = 'Patient', scat2_ylab = 'Lab var 2'))
-
+icurve(
+  mat = mm, group = 1:25 %% 5 == 0,
+  iscatter1 = x1, iscatter2 = x2,
+  labels = list(
+    Patient = 1:25,
+    Disease = sample(c('NHL','HL'), 25, replace = TRUE)
+  ),
+  plotOpts = list(
+    curves_xlab = 'Response evaluation time point',
+    curves_ylab = '% response',
+    scat1_xlab = 'Patient', scat1_ylab = 'Lab var 1',
+    scat2_xlab = 'Patient', scat2_ylab = 'Lab var 2')
+)
 ```
 
 ### customizations
 
-Each type of plot has its own set of options and customizations that affect the appearance of individual aesthetic elements. Some options such as `pointcolor`, `pointsize`, or `rectcolor` are common among all or most plots, but others apply only to specific plots.
+Each type of plot has its own set of options and customizations that affect
+the appearance of individual aesthetic elements. Some options such as
+`pointcolor`, `pointsize`, or `rectcolor` are common among all or most plots,
+but others apply only to specific plots.
 
-See `?iplotOpts` for a list of the plots in this package as well as links to the lists of options for each plot.
+See `?iplotOpts` for a list of the plots in this package as well as links to
+the lists of options for each plot.
 
 ### saving iplots
 
-To save an interactive plot (html widget), you can use the `saveWidget` function from the [htmlwidgets](http://www.htmlwidgets.org) package. It is recommended to use `selfcontained = TRUE` (default) when saving widgets as html files--file sizes will be larger, but the plots will not depend on external resources to be displayed properly.
+To save an interactive plot (html widget), you can use the `saveWidget`
+function from the [htmlwidgets](http://www.htmlwidgets.org) package. It is
+recommended to use `selfcontained = TRUE` (default) when saving widgets as
+html files--file sizes will be larger, but the plots will not depend on
+external resources to be displayed properly.
 
 ```{r, eval=FALSE}
 htmlwidgets::saveWidget(file = './scatter_plot.html',
